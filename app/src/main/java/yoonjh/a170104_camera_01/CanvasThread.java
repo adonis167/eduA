@@ -5,6 +5,7 @@ import android.view.SurfaceHolder;
 
 /**
  * Created by JihoYoon on 2017-04-02.
+ * Modified by JoonYeong on 2017-04-02.
  */
 
 public class CanvasThread extends Thread {
@@ -17,7 +18,6 @@ public class CanvasThread extends Thread {
         surfaceHolder = s;
         myImageView = m;
     }
-
     public void setRunning(boolean r) {
         run = r;
     }
