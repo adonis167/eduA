@@ -4,12 +4,12 @@ import android.graphics.Canvas;
 import android.view.SurfaceHolder;
 
 
-public class CanvasThread extends Thread {
+public class RemoveCanvasThread extends Thread {
     private SurfaceHolder surfaceHolder;
-    private MyImageView myImageView;
+    private RemoveMasking myImageView;
     private boolean run = false;
 
-    public CanvasThread(SurfaceHolder s, MyImageView m) {
+    public RemoveCanvasThread(SurfaceHolder s, RemoveMasking m) {
 
         surfaceHolder = s;
         myImageView = m;

@@ -32,8 +32,6 @@ import static android.R.attr.x;
 import static android.R.attr.y;
 
 public class EditActivity extends AppCompatActivity {
-    private static final int STROKE_WIDTH_LIGHT = 20;
-    private static final int STROKE_WIDTH_BOLD = 35;
     public static Bitmap bm;
 
     @Override
@@ -43,14 +41,12 @@ public class EditActivity extends AppCompatActivity {
         Intent intent = getIntent();
         bm = (Bitmap) intent.getParcelableExtra("bitmap");
 
-        //vw = new MyView(this);
-        //setContentView(vw);
-
         final ToggleButton tb = (ToggleButton) findViewById(R.id.tgb_Masking);
         Button start = (Button) findViewById(R.id.btn_Start);
     }
 
     public void mOnClick(View v) {
+        MyImageView.canvasthread.setRunning(false);
         Intent a = new Intent(this, Memorize.class);
         startActivity(a);
     }

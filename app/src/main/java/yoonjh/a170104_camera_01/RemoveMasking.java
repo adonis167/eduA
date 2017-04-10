@@ -7,22 +7,24 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
 
-public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
+public class RemoveMasking extends SurfaceView implements SurfaceHolder.Callback {
     private static int STROKE_WIDTH = 25;
     private  static int OPACITY = 75;
 
-    static CanvasThread canvasthread;
+    static RemoveCanvasThread canvasthread;
     Paint paint = new Paint();
     static Path path = new Path();
 
 
-    public MyImageView(Context context) {
+    public RemoveMasking(Context context) {
 
         super(context);
 
@@ -33,11 +35,11 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
         paint.setAntiAlias(true);
 
         getHolder().addCallback(this);
-        canvasthread = new CanvasThread(getHolder(), this);
+        canvasthread = new RemoveCanvasThread(getHolder(), this);
         setFocusable(true);
     }
 
-    public MyImageView(Context context, AttributeSet attrs) {
+    public RemoveMasking(Context context, AttributeSet attrs) {
         super(context,attrs);
 
         paint.setStyle(Paint.Style.STROKE); // 선이 그려지도록
@@ -47,13 +49,13 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
         paint.setAntiAlias(true);
 
         getHolder().addCallback(this);
-        canvasthread = new CanvasThread(getHolder(), this);
+        canvasthread = new RemoveCanvasThread(getHolder(), this);
         setFocusable(true);
     }
     /*
      * xml 에서 넘어온 속성을 멤버변수로 셋팅하는 역할을 한다.
      */
-    public MyImageView(Context context,AttributeSet attrs,int defStyle) {
+    public RemoveMasking(Context context,AttributeSet attrs,int defStyle) {
         super(context,attrs,defStyle);
 
         paint.setStyle(Paint.Style.STROKE); // 선이 그려지도록
@@ -63,14 +65,29 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
         paint.setAntiAlias(true);
 
         getHolder().addCallback(this);
-        canvasthread = new CanvasThread(getHolder(), this);
+        canvasthread = new RemoveCanvasThread(getHolder(), this);
         setFocusable(true);
     }
 
     protected void onDraw(Canvas canvas) {
-        Bitmap mapImg = BitmapFactory.decodeResource(getResources(), R.drawable.subnote); //EditActivity.bm //R.drawable.subnote
-        canvas.drawBitmap(mapImg, 0, 0, null);
-        canvas.drawPath(path, paint);
+
+        canvas.drawColor(Color.WHITE);
+
+        Canvas c = new Canvas();
+
+        Bitmap mainImage = BitmapFactory.decodeResource(getResources(),R.drawable.subnote);
+        Bitmap mask = BitmapFactory.decodeResource(getResources(), R.drawable.subnote_masking);
+        Bitmap result = Bitmap.createBitmap(mainImage.getWidth(), mainImage.getHeight(), Bitmap.Config.ARGB_8888);
+
+        c.setBitmap(result);
+        c.drawBitmap(mainImage, 0, 0, null);
+
+        Paint paint = new Paint();
+        paint.setFilterBitmap(false);
+        paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.DST_OUT) ); // DST_OUT
+        c.drawBitmap(mask, 0, 0, paint);
+        paint.setXfermode(null);
+        canvas.drawBitmap(result, 0, 0, null);
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -92,6 +109,7 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         float x = event.getX();
