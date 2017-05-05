@@ -1,13 +1,5 @@
 package yoonjh.a170104_camera_01;
 
-import java.io.BufferedOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -18,23 +10,26 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import java.io.BufferedOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.util.ArrayList;
 
 public class FileExplorer extends Activity {
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_iMAGE = 2;
 
-    String mCurrent;
-    String mRoot;
+    static String mCurrent;
+    static String mRoot;
     TextView mCurrentTxt;
     ListView mFileList;
     ArrayAdapter<String> mAdapter;
@@ -52,6 +47,10 @@ public class FileExplorer extends Activity {
 
         //SD카드 루트 가져옴
         mRoot = Environment.getExternalStorageDirectory().getAbsolutePath() + "/eduA";
+        File file = new File(mRoot+"/tmp");
+        if( !file.exists() )  // 원하는 경로에 폴더가 있는지 확인
+            file.mkdirs();
+
         mCurrent = mRoot;
 
         //어댑터를 생성하고 연결해줌
@@ -77,11 +76,15 @@ public class FileExplorer extends Activity {
                     //들어가기 위해 /와 터치한 파일 명을 붙여줌
                     String Path = mCurrent + "/" + Name;
                     File f = new File(Path);//File 클래스 생성
-                    if(f.isDirectory()){//디렉토리면?
-                        mCurrent = Path;//현재를 Path로 바꿔줌
-                        refreshFiles();//리프레쉬
-                    }else{//디렉토리가 아니면 토스트 메세지를 뿌림
-                        Toast.makeText(FileExplorer.this, arFiles.get(position), 0).show();
+                    if(f.isDirectory()) //디렉토리면
+                    {
+                        mCurrent = Path;
+                        refreshFiles();
+                    }
+                    else
+                    {
+                        //이 부분 수정 필요 --JihoYoon
+//                      Toast.makeText(FileExplorer.this, arFiles.get(position), 0).show();
                     }
                 }
             };
@@ -194,8 +197,6 @@ public class FileExplorer extends Activity {
     }
 
 
-
-
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
@@ -203,6 +204,26 @@ public class FileExplorer extends Activity {
             return;
 
         switch (requestCode) {
+            case PICK_FROM_ALBUM: {
+                mImageCaptureUri = data.getData();
+            }
+
+            case PICK_FROM_CAMERA: {
+                // 이미지를 가져온 이후의 리사이즈할 이미지 크기를 결정합니다.
+                // 이후에 이미지 크롭 어플리케이션을 호출하게 됩니다.
+                Intent intent = new Intent("com.android.camera.action.CROP");
+                intent.setDataAndType(mImageCaptureUri, "image/*");
+
+                intent.putExtra("outputX", 500); // CROP한 이미지의 x축 크기
+                intent.putExtra("outputY", 500); // CROP한 이미지의 y축 크기
+                //intent.putExtra("aspectX", 1); // CROP 박스의 X축 비율
+                //intent.putExtra("aspectY", 1); // CROP 박스의 Y축 비율
+                intent.putExtra("scale", true);
+                intent.putExtra("return-data", true);
+                startActivityForResult(intent, CROP_FROM_iMAGE); // CROP_FROM_iMAGE case문 이동
+                break;
+            }
+
             case CROP_FROM_iMAGE:
             {
                 // 크롭이 된 이후의 이미지를 넘겨 받습니다.
@@ -222,7 +243,6 @@ public class FileExplorer extends Activity {
                 {
                     photo = extras.getParcelable("data"); // CROP된 BITMAP
                     //iv.setImageBitmap(photo); // 레이아웃의 이미지칸에 CROP된 BITMAP을 보여줌
-
                     storeCropImage(photo, filePath); // CROP된 이미지를 외부저장소, 앨범에 저장한다.
                 }
                 // 임시 파일 삭제
@@ -235,26 +255,6 @@ public class FileExplorer extends Activity {
                 Intent intent = new Intent(this, EditActivity.class);
                 intent.putExtra("bitmap", photo);
                 startActivity(intent);
-                break;
-            }
-
-            case PICK_FROM_ALBUM: {
-                mImageCaptureUri = data.getData();
-            }
-
-            case PICK_FROM_CAMERA: {
-                // 이미지를 가져온 이후의 리사이즈할 이미지 크기를 결정합니다.
-                // 이후에 이미지 크롭 어플리케이션을 호출하게 됩니다.
-                Intent intent = new Intent("com.android.camera.action.CROP");
-                intent.setDataAndType(mImageCaptureUri, "image/*");
-
-                intent.putExtra("outputX", 500); // CROP한 이미지의 x축 크기
-                intent.putExtra("outputY", 500); // CROP한 이미지의 y축 크기
-                //intent.putExtra("aspectX", 1); // CROP 박스의 X축 비율
-                //intent.putExtra("aspectY", 1); // CROP 박스의 Y축 비율
-                intent.putExtra("scale", true);
-                intent.putExtra("return-data", true);
-                startActivityForResult(intent, CROP_FROM_iMAGE); // CROP_FROM_iMAGE case문 이동
                 break;
             }
         }
