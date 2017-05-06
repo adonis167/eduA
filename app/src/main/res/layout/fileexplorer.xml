@@ -20,29 +20,29 @@
 
         <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:gravity="center|right">
 
-            <Button
-                android:id="@+id/btnroot"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="mOnClick"
-                android:text="HOME"/>
+            <!--<Button-->
+                <!--android:id="@+id/btnroot"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:onClick="mOnClick"-->
+                <!--android:text="HOME"/>-->
 
-            <Button
-                android:id="@+id/btnup"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:onClick="mOnClick"
-                android:text="상위폴더"/>
+            <!--<Button-->
+                <!--android:id="@+id/btnup"-->
+                <!--android:layout_width="wrap_content"-->
+                <!--android:layout_height="wrap_content"-->
+                <!--android:layout_weight="1"-->
+                <!--android:onClick="mOnClick"-->
+                <!--android:text="상위폴더"/>-->
 
             <Button
                 android:id="@+id/btnNewDirectory"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
                 android:onClick="mOnClick"
                 android:text="새폴더"/>
 

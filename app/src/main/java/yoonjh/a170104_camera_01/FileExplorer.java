@@ -45,11 +45,18 @@ public class FileExplorer extends Activity {
         mFileList = (ListView)findViewById(R.id.filelist);
         arFiles = new ArrayList<String>();
 
-        //SD카드 루트 가져옴
         mRoot = Environment.getExternalStorageDirectory().getAbsolutePath() + "/eduA";
-        File file = new File(mRoot+"/tmp");
-        if( !file.exists() )  // 원하는 경로에 폴더가 있는지 확인
-            file.mkdirs();
+
+        File[] file = new File[3];
+        file[0] = new File(mRoot+"/Temp");
+        file[1] = new File(mRoot+"/Convert");
+        file[2] = new File(mRoot+"/Import");
+
+        for (int i=0; i<file.length; i++){
+
+            if( !file[i].exists() )
+                file[i].mkdirs();
+        }
 
         mCurrent = mRoot;
 
@@ -67,21 +74,29 @@ public class FileExplorer extends Activity {
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // TODO Auto-generated method stub
                     String Name = arFiles.get(position);//클릭된 위치의 값을 가져옴
+                    String Path="";
 
+                    if (Name.equals("[최상위폴더]")) {
+                        Path = mRoot;
+                    }
+                    else if (Name.equals("[상위폴더]")) {
+                        int end = mCurrent.lastIndexOf("/");///가 나오는 마지막 인덱스를 찾고
+                        Path = mCurrent.substring(0, end);//그부분을 짤라버림 즉 위로가게됨
+                    }
                     //디렉토리이면
-                    if(Name.startsWith("[") && Name.endsWith("]")){
+                    else if(Name.startsWith("[") && Name.endsWith("]")){
                         Name = Name.substring(1, Name.length() - 1);//[]부분을 제거해줌
+                        Path = mCurrent + "/" + Name;
                     }
 
-                    //들어가기 위해 /와 터치한 파일 명을 붙여줌
-                    String Path = mCurrent + "/" + Name;
+
                     File f = new File(Path);//File 클래스 생성
                     if(f.isDirectory()) //디렉토리면
                     {
                         mCurrent = Path;
                         refreshFiles();
                     }
-                    else
+                    else //파일이면
                     {
                         //이 부분 수정 필요 --JihoYoon
 //                      Toast.makeText(FileExplorer.this, arFiles.get(position), 0).show();
@@ -91,21 +106,21 @@ public class FileExplorer extends Activity {
 
     public void mOnClick(View v){
         switch(v.getId()){
-            case R.id.btnroot://HOME
-                if(mCurrent.compareTo(mRoot) != 0){//루트가 아니면 루트로 가기
-                    mCurrent = mRoot;
-                    refreshFiles();//리프레쉬
-                }
-                break;
-
-            case R.id.btnup: //상위폴더
-                if(mCurrent.compareTo(mRoot) != 0){//루트가 아니면
-                    int end = mCurrent.lastIndexOf("/");///가 나오는 마지막 인덱스를 찾고
-                    String uppath = mCurrent.substring(0, end);//그부분을 짤라버림 즉 위로가게됨
-                    mCurrent = uppath;
-                    refreshFiles();//리프레쉬
-                }
-                break;
+//            case R.id.btnroot://HOME
+//                if(mCurrent.compareTo(mRoot) != 0){//루트가 아니면 루트로 가기
+//                    mCurrent = mRoot;
+//                    refreshFiles();//리프레쉬
+//                }
+//                break;
+//
+//            case R.id.btnup: //상위폴더
+//                if(mCurrent.compareTo(mRoot) != 0){//루트가 아니면
+//                    int end = mCurrent.lastIndexOf("/");///가 나오는 마지막 인덱스를 찾고
+//                    String uppath = mCurrent.substring(0, end);//그부분을 짤라버림 즉 위로가게됨
+//                    mCurrent = uppath;
+//                    refreshFiles();//리프레쉬
+//                }
+//                break;
 
             case R.id.btnNewDirectory: //새폴더
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -152,23 +167,31 @@ public class FileExplorer extends Activity {
     }
 
     void refreshFiles(){
-        mCurrentTxt.setText(mCurrent);//현재 PATH를 가져옴
-        arFiles.clear();//배열리스트를 지움
-        File current = new File(mCurrent);//현재 경로로 File클래스를 만듬
-        String[] files = current.list();//현재 경로의 파일과 폴더 이름을 문자열 배열로 리턴
+        mCurrentTxt.setText(mCurrent); //현재 PATH를 가져옴
+        arFiles.clear(); //배열리스트를 지움
+        File current = new File(mCurrent); //현재 경로로 File클래스를 만듬
+        String[] files = current.list(); //현재 경로의 파일과 폴더 이름을 문자열 배열로 리턴
 
-        //파일이 있다면?
+        if(mCurrent.compareTo(mRoot) != 0) {//루트가 아니면
+            arFiles.add("[최상위폴더]");
+            arFiles.add("[상위폴더]");
+        }
+
+        //파일이 있다면
         if(files != null){
             //여기서 출력을 해줌
             for(int i = 0; i < files.length;i++){
                 String Path = mCurrent + "/" + files[i];
                 String Name = "";
                 File f = new File(Path);
-                if(f.isDirectory()){
+
+                if(f.isDirectory()) {
                     Name = "[" + files[i] + "]";//디렉토리면 []를 붙여주고
-                }else{
+                }
+                else {
                     Name = files[i];//파일이면 그냥 출력
                 }
+
                 arFiles.add(Name);//배열리스트에 추가해줌
             }
         }
@@ -190,7 +213,7 @@ public class FileExplorer extends Activity {
 
         // 임시로 사용할 파일의 경로를 생성
         String url = "TMP_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-        mImageCaptureUri = Uri.fromFile(new File(mRoot+"/tmp/", url));
+        mImageCaptureUri = Uri.fromFile(new File(mRoot+"/Temp/", url));
 
         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
         startActivityForResult(intent, PICK_FROM_CAMERA);
