@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:onClick="IntroClick"
+    tools:context=".IntroActivity"
+    android:layout_gravity="center">
+    <ImageView
+        android:id="@+id/intro_imageView_01"
+        android:layout_width="1080px"
+        android:layout_height="1920px"
+        android:onClick="IntroClick"
+        android:layout_gravity="center"/>
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/intro_title"
+        android:layout_gravity="center"/>
+>
+</FrameLayout>
