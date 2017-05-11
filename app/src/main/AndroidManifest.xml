@@ -26,11 +26,6 @@
             android:name=".FileExplorer"
             android:configChanges="orientation|screenSize"/>
         <activity android:name=".Memorize"/>
-        <activity android:name=".CropImageActivity"
-                  android:configChanges="orientation|keyboardHidden"
-                  android:screenOrientation="landscape"
-                  android:theme="@android:style/Theme.Black.NoTitleBar.Fullscreen" >
-        </activity>
     </application>
 
 </manifest>

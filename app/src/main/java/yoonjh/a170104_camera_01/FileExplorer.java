@@ -4,12 +4,17 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
@@ -24,6 +29,7 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class FileExplorer extends Activity {
+    private static final int PERMISSION_REQUEST_CODE = 9;
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_iMAGE = 2;
@@ -40,6 +46,22 @@ public class FileExplorer extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fileexplorer);
+
+        if (Build.VERSION.SDK_INT >= 23)
+        {
+            if (checkPermission())
+            {
+                // Code for above or equal 23 API Oriented Device
+                // Your Permission granted already .Do next code
+            } else {
+                requestPermission(); // Code for permission
+            }
+        }
+        else
+        {
+            // Code for Below 23 API Oriented Device
+            // Do next code
+        }
 
         mCurrentTxt = (TextView)findViewById(R.id.current);
         mFileList = (ListView)findViewById(R.id.filelist);
@@ -121,6 +143,13 @@ public class FileExplorer extends Activity {
 //                    refreshFiles();//리프레쉬
 //                }
 //                break;
+            case R.id.btnRemoveDirectory:
+                DeleteDir(mRoot+"/Temp");
+                DeleteDir(mRoot+"/Convert");
+                DeleteDir(mRoot+"/Import");
+                mCurrent = mRoot;
+                refreshFiles();
+                break;
 
             case R.id.btnNewDirectory: //새폴더
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -326,5 +355,55 @@ public class FileExplorer extends Activity {
         } catch(Exception e) {
             return 0;
         }
+    }
+
+
+
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void requestPermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Toast.makeText(FileExplorer.this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+        } else {
+            ActivityCompat.requestPermissions(FileExplorer.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.e("value", "Permission Granted, Now you can use local drive .");
+                } else {
+                    Log.e("value", "Permission Denied, You cannot use local drive .");
+                }
+                break;
+        }
+    }
+
+    private void DeleteDir(String path)
+    {
+        File file = new File(path);
+        File[] childFileList = file.listFiles();
+        for(File childFile : childFileList)
+        {
+            if(childFile.isDirectory()) {
+                DeleteDir(childFile.getAbsolutePath());     //하위 디렉토리 루프
+            }
+            else {
+                childFile.delete();    //하위 파일삭제
+            }
+        }
+        file.delete();    //root 삭제
     }
 }
