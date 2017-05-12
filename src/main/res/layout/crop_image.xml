@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:orientation="vertical" android:gravity="center"
+  android:layout_width="fill_parent"
+  android:layout_height="fill_parent">
+
+  <nicehee.ImageCrop.CropImage android:id="@+id/crop_view"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"/>
+  <TextView android:textSize="18sp" android:background="#77550000" android:id="@+id/TextView01" android:layout_alignParentTop="true" android:layout_width="fill_parent" android:layout_height="44dip" android:gravity="center" android:text="선위를 탭하며 이동하세요!!"></TextView>
+  <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_margin="5px" android:id="@+id/btn_cancle" android:layout_alignParentRight="true" android:text="취소" android:layout_alignParentBottom="true"></Button>
+  <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:id="@+id/btn_ok" android:layout_alignParentTop="true" android:layout_alignParentRight="true" android:layout_margin="5px" android:text="확인"></Button>
+
+</RelativeLayout>

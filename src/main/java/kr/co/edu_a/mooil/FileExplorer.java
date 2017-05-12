@@ -4,15 +4,20 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -24,12 +29,13 @@ import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 public class FileExplorer extends Activity {
+    private static final int PERMISSION_REQUEST_CODE = 9;
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_iMAGE = 2;
 
-    String mCurrent;
-    String mRoot;
+    static String mCurrent;
+    static String mRoot;
     TextView mCurrentTxt;
     ListView mFileList;
     ListViewAdapter mAdapter;
@@ -41,12 +47,39 @@ public class FileExplorer extends Activity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.fileexplorer);
 
+        if (Build.VERSION.SDK_INT >= 23)
+        {
+            if (checkPermission())
+            {
+                // Code for above or equal 23 API Oriented Device
+                // Your Permission granted already .Do next code
+            } else {
+                requestPermission(); // Code for permission
+            }
+        }
+        else
+        {
+            // Code for Below 23 API Oriented Device
+            // Do next code
+        }
+
         mCurrentTxt = (TextView)findViewById(R.id.current);
         mFileList = (ListView)findViewById(R.id.filelist);
         arFiles = new ArrayList<String>();
 
-        //SD카드 루트 가져옴
-        mRoot = Environment.getExternalStorageDirectory().getAbsolutePath();
+        mRoot = Environment.getExternalStorageDirectory().getAbsolutePath() + "/eduA";
+
+        File[] file = new File[3];
+        file[0] = new File(mRoot+"/Temp");
+        file[1] = new File(mRoot+"/Convert");
+        file[2] = new File(mRoot+"/Import");
+
+        for (int i=0; i<file.length; i++){
+
+            if( !file[i].exists() )
+                file[i].mkdirs();
+        }
+
         mCurrent = mRoot;
 
         //어댑터를 생성하고 연결해줌
@@ -62,7 +95,6 @@ public class FileExplorer extends Activity {
                 @Override
                 public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                     // TODO Auto-generated method stub
-
                     String Name = arFiles.get(position);//클릭된 위치의 값을 가져옴
                     if(Name == ".")//루트
                     {
@@ -90,8 +122,12 @@ public class FileExplorer extends Activity {
                         if (f.isDirectory()) {//디렉토리면?
                             mCurrent = Path;//현재를 Path로 바꿔줌
                             refreshFiles();//리프레쉬
-                        } else {//디렉토리가 아니면 토스트 메세지를 뿌림
-                            Toast.makeText(FileExplorer.this, arFiles.get(position), Toast.LENGTH_LONG).show();
+                        }
+
+                        else //파일이면
+                        {
+                            /** 이 부분 수정 필요 --JihoYoon **/
+                            Toast.makeText(FileExplorer.this, arFiles.get(position), 0).show();
                         }
                     }
                 }
@@ -99,6 +135,14 @@ public class FileExplorer extends Activity {
 
     public void mOnClick(View v){
         switch(v.getId()){
+            case R.id.btnRemoveDirectory:
+                DeleteDir(mRoot+"/Temp");
+                DeleteDir(mRoot+"/Convert");
+                DeleteDir(mRoot+"/Import");
+                mCurrent = mRoot;
+                refreshFiles();
+                break;
+
             case R.id.btnNewDirectory: //새폴더
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
                 alert.setTitle("새폴더 생성");
@@ -124,6 +168,7 @@ public class FileExplorer extends Activity {
 
                     }
                 });
+
                 alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                     }
@@ -181,19 +226,20 @@ public class FileExplorer extends Activity {
         Intent intent = new Intent(Intent.ACTION_PICK);
         intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
         startActivityForResult(intent, PICK_FROM_ALBUM);
-    }
 
+    }
     private void getPhotoFromCamera() { // 카메라 촬영 후 이미지 가져오기
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
         // 임시로 사용할 파일의 경로를 생성
         String url = "TMP_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-        mImageCaptureUri = Uri.fromFile(new File(mRoot+"/tmp/", url));
+        mImageCaptureUri = Uri.fromFile(new File(mRoot+"/Temp/", url));
 
         intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
         startActivityForResult(intent, PICK_FROM_CAMERA);
     }
+
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -202,6 +248,26 @@ public class FileExplorer extends Activity {
             return;
 
         switch (requestCode) {
+            case PICK_FROM_ALBUM: {
+                mImageCaptureUri = data.getData();
+            }
+
+            case PICK_FROM_CAMERA: {
+                // 이미지를 가져온 이후의 리사이즈할 이미지 크기를 결정합니다.
+                // 이후에 이미지 크롭 어플리케이션을 호출하게 됩니다.
+                Intent intent = new Intent("com.android.camera.action.CROP");
+                intent.setDataAndType(mImageCaptureUri, "image/*");
+
+                intent.putExtra("outputX", 500); // CROP한 이미지의 x축 크기
+                intent.putExtra("outputY", 500); // CROP한 이미지의 y축 크기
+                //intent.putExtra("aspectX", 1); // CROP 박스의 X축 비율
+                //intent.putExtra("aspectY", 1); // CROP 박스의 Y축 비율
+                intent.putExtra("scale", true);
+                intent.putExtra("return-data", true);
+                startActivityForResult(intent, CROP_FROM_iMAGE); // CROP_FROM_iMAGE case문 이동
+                break;
+            }
+
             case CROP_FROM_iMAGE:
             {
                 // 크롭이 된 이후의 이미지를 넘겨 받습니다.
@@ -221,7 +287,6 @@ public class FileExplorer extends Activity {
                 {
                     photo = extras.getParcelable("data"); // CROP된 BITMAP
                     //iv.setImageBitmap(photo); // 레이아웃의 이미지칸에 CROP된 BITMAP을 보여줌
-
                     storeCropImage(photo, filePath); // CROP된 이미지를 외부저장소, 앨범에 저장한다.
                 }
                 // 임시 파일 삭제
@@ -234,26 +299,6 @@ public class FileExplorer extends Activity {
                 Intent intent = new Intent(this, EditActivity.class);
                 intent.putExtra("bitmap", photo);
                 startActivity(intent);
-                break;
-            }
-
-            case PICK_FROM_ALBUM: {
-                mImageCaptureUri = data.getData();
-            }
-
-            case PICK_FROM_CAMERA: {
-                // 이미지를 가져온 이후의 리사이즈할 이미지 크기를 결정합니다.
-                // 이후에 이미지 크롭 어플리케이션을 호출하게 됩니다.
-                Intent intent = new Intent("com.android.camera.action.CROP");
-                intent.setDataAndType(mImageCaptureUri, "image/*");
-
-                intent.putExtra("outputX", 500); // CROP한 이미지의 x축 크기
-                intent.putExtra("outputY", 500); // CROP한 이미지의 y축 크기
-                //intent.putExtra("aspectX", 1); // CROP 박스의 X축 비율
-                //intent.putExtra("aspectY", 1); // CROP 박스의 Y축 비율
-                intent.putExtra("scale", true);
-                intent.putExtra("return-data", true);
-                startActivityForResult(intent, CROP_FROM_iMAGE); // CROP_FROM_iMAGE case문 이동
                 break;
             }
         }
@@ -278,29 +323,51 @@ public class FileExplorer extends Activity {
             e.printStackTrace();
         }
     }
-    /** Get Bitmap's Width **/
-    public static int getBitmapOfWidth( String fileName ){
-        try {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(fileName, options);
-            return options.outWidth;
-        } catch(Exception e) {
-            return 0;
+
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
         }
     }
 
-    /** Get Bitmap's height **/
-    public static int getBitmapOfHeight( String fileName ){
+    private void requestPermission() {
 
-        try {
-            BitmapFactory.Options options = new BitmapFactory.Options();
-            options.inJustDecodeBounds = true;
-            BitmapFactory.decodeFile(fileName, options);
-
-            return options.outHeight;
-        } catch(Exception e) {
-            return 0;
+        if (ActivityCompat.shouldShowRequestPermissionRationale(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Toast.makeText(FileExplorer.this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+        } else {
+            ActivityCompat.requestPermissions(FileExplorer.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
         }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.e("value", "Permission Granted, Now you can use local drive .");
+                } else {
+                    Log.e("value", "Permission Denied, You cannot use local drive .");
+                }
+                break;
+        }
+    }
+
+    private void DeleteDir(String path)
+    {
+        File file = new File(path);
+        File[] childFileList = file.listFiles();
+        for(File childFile : childFileList)
+        {
+            if(childFile.isDirectory()) {
+                DeleteDir(childFile.getAbsolutePath());     //하위 디렉토리 루프
+            }
+            else {
+                childFile.delete();    //하위 파일삭제
+            }
+        }
+        file.delete();    //root 삭제
     }
 }

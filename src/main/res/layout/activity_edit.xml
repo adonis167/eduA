@@ -7,7 +7,7 @@
     android:orientation="vertical"
     tools:context=".EditActivity">
 
-    <view class="yoonjh.a170104_camera_01.MyImageView"
+    <view class="kr.co.edu_a.mooil.MyImageView"
         android:id="@+id/main_imagemap"
         android:layout_width="match_parent"
         android:layout_height="match_parent"

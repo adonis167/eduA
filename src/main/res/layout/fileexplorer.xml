@@ -82,6 +82,13 @@
                 android:layout_weight="1"
                 android:onClick="mOnClick"
                 android:text="갤러리에서 가져오기"/>
+            <Button
+                android:id="@+id/btnRemoveDirectory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="mOnClick"
+                android:text="삭제"/>
         </LinearLayout>
     </LinearLayout>
     <!-- 사이드바 -->
