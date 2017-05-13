@@ -23,10 +23,14 @@ public class MainActivity extends AppCompatActivity {
     LinearLayout slidingPage01;
     //메인페이지 레이아웃
     LinearLayout mainPage01;
+
+    Intent slide_intent;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
         //UI
         mainPage01 = (LinearLayout)findViewById(R.id.mainPage01);
         slidingPage01 = (LinearLayout)findViewById(R.id.slidingPage01);
@@ -89,9 +93,29 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void MFOnClick(View v)
-    {
-        Intent intent = new Intent(this, FileExplorer.class);
-        startActivity(intent);
+    public void MFOnClick(View v) {
+        switch (v.getId()) {
+            case R.id.mainpage:
+                break;
+            case R.id.pagelist:
+                slide_intent = new Intent(this, FileExplorer.class);
+                startActivity(slide_intent);
+                break;
+            case R.id.pagemake:
+                break;
+            case R.id.notice:
+                break;
+            case R.id.favorite:
+                break;
+            case R.id.recentread:
+                break;
+            case R.id.importfile:
+                break;
+            case R.id.pdfrender:
+                slide_intent = new Intent(this, PDFRenderer.class);
+                startActivity(slide_intent);
+                break;
+        }
     }
+
 }

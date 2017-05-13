@@ -29,6 +29,8 @@
             android:configChanges="orientation|screenSize" /> <!--Preventing the intent from initializing when rotating a device.-->
         <activity android:name=".Memorize" />
         <activity android:name=".PinchZoom" />
+        <activity android:name=".PDFRenderer" />
+
     </application>
 
 </manifest>

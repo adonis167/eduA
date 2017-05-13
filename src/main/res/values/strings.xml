@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">Mooil</string>
+
+    <!-- Start of Strings of PDFRenderer -->
+    <string name="app_name_with_index">PdfRenderer (%1$d/%2$d)</string>
+    <string name="info">Info</string>
+    <string name="previous">Previous</string>
+    <string name="next">Next</string>
+    <!-- End of String of PDFRenderer -->
+
 </resources>

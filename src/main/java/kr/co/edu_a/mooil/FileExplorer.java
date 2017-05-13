@@ -16,9 +16,14 @@ import android.support.v4.app.ActivityCompat;
 import android.support.v4.content.ContextCompat;
 import android.util.Log;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.CheckBox;
 import android.widget.EditText;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -34,13 +39,23 @@ public class FileExplorer extends Activity {
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_iMAGE = 2;
 
-    static String mCurrent;
-    static String mRoot;
+    String mCurrent;
+    String mRoot;
     TextView mCurrentTxt;
     ListView mFileList;
     ListViewAdapter mAdapter;
+    ImageView modifyButton;
+    CheckBox modifyCheckBox;
     ArrayList<String> arFiles;
     Uri mImageCaptureUri;
+
+    boolean isPageOpen = false;
+    boolean isListModifyOn = false;
+    Animation translateLeftAnim;
+    Animation translateRightAnim;
+    LinearLayout slidingPage01;
+
+    Intent slide_intent;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,6 +102,18 @@ public class FileExplorer extends Activity {
         mFileList.setAdapter(mAdapter);//리스트뷰에 어댑터 연결
         mFileList.setOnItemClickListener(mItemClickListener);//리스너 연결
         refreshFiles();
+
+        modifyButton = (ImageView)findViewById(R.id.list_modify_btn);
+        modifyButton.setVisibility(View.VISIBLE);
+
+        slidingPage01 = (LinearLayout)findViewById(R.id.slidingPage01);
+        //애니메이션
+        translateRightAnim = AnimationUtils.loadAnimation(this, R.anim.translate_right);
+        translateLeftAnim = AnimationUtils.loadAnimation(this, R.anim.translate_left);
+        //애니메이션 리스너 설정
+        SlidingPageAnimationListener animationListener = new SlidingPageAnimationListener();
+        translateLeftAnim.setAnimationListener(animationListener);
+        translateRightAnim.setAnimationListener(animationListener);
     }
 
     //리스트뷰 클릭 리스너
@@ -105,10 +132,12 @@ public class FileExplorer extends Activity {
                     }
                     else if(Name == "..")//상위폴더
                     {
-                        int end = mCurrent.lastIndexOf("/");///가 나오는 마지막 인덱스를 찾고
-                        String uppath = mCurrent.substring(0, end);//그부분을 짤라버림 즉 위로가게됨
-                        mCurrent = uppath;
-                        refreshFiles();//리프레쉬
+                        if (mCurrent != mRoot) {
+                            int end = mCurrent.lastIndexOf("/");///가 나오는 마지막 인덱스를 찾고
+                            String uppath = mCurrent.substring(0, end);//그부분을 짤라버림 즉 위로가게됨
+                            mCurrent = uppath;
+                            refreshFiles();//리프레쉬
+                        }
                     }
                     else {
                         //디렉토리이면
@@ -197,47 +226,28 @@ public class FileExplorer extends Activity {
         //파일이 있다면?
         if(files != null){
             //여기서 출력을 해줌
-            mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_folder), ".", "기본 폴더로") ;
-            arFiles.add(".");
-            mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_file), "..", "상위 폴더로") ;
-            arFiles.add("..");
+            if(mCurrent.compareTo(mRoot) != 0) {
+                mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_home), ".", "Home", ContextCompat.getDrawable(this, R.drawable.list_null));
+                arFiles.add(".");
+                mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_back), "..", "Back", ContextCompat.getDrawable(this, R.drawable.list_null));
+                arFiles.add("..");
+            }
             for(int i = 0; i < files.length;i++){
                 String Path = mCurrent + "/" + files[i];
                 String Name = "";
                 File f = new File(Path);
                 if(f.isDirectory()){
-                    Name = "[" + files[i] + "]";//디렉토리면 []를 붙여주고
-                    mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_folder),
-                            Name, "폴더") ;
+                    Name = "" + files[i] + "";//디렉토리면 []를 붙여주고
+                    mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_folder), Name, "Folder", ContextCompat.getDrawable(this, R.drawable.list_favor_off)) ;
                 }else{
                     Name = files[i];
-                    mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_file),
-                            Name, "파일") ;
+                    mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_file), Name, "File", ContextCompat.getDrawable(this, R.drawable.list_favor_off)) ;
                 }
                 arFiles.add(Name);//배열리스트에 추가해줌
             }
         }
         //다끝나면 리스트뷰를 갱신시킴
         mAdapter.notifyDataSetChanged();
-    }
-
-    private void getPhotoFromGallery() { // 갤러리에서 이미지 가져오기
-
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-        startActivityForResult(intent, PICK_FROM_ALBUM);
-
-    }
-    private void getPhotoFromCamera() { // 카메라 촬영 후 이미지 가져오기
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        // 임시로 사용할 파일의 경로를 생성
-        String url = "TMP_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-        mImageCaptureUri = Uri.fromFile(new File(mRoot+"/Temp/", url));
-
-        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-        startActivityForResult(intent, PICK_FROM_CAMERA);
     }
 
 
@@ -355,6 +365,107 @@ public class FileExplorer extends Activity {
         }
     }
 
+    public void onButton1Clicked(View v){
+        //닫기
+        if(isPageOpen){
+            //애니메이션 시작
+            slidingPage01.startAnimation(translateLeftAnim);
+            for(int i=0; i<mFileList.getChildCount(); i++)//mainPage 이하 활성화
+                mFileList.getChildAt(i).setClickable(true);
+            isPageOpen = false;
+        }
+        //열기
+        else{
+            slidingPage01.setVisibility(View.VISIBLE);
+            slidingPage01.startAnimation(translateRightAnim);
+            slidingPage01.setClickable(true);
+            for(int i=0; i<mFileList.getChildCount(); i++)//비활성화
+                mFileList.getChildAt(i).setClickable(false);
+            isPageOpen = true;
+        }
+    }
+    public void onButton2Clicked(View v){
+        //닫기
+        if(isListModifyOn){
+            mAdapter.isCheckBoxDraw = false;
+            isListModifyOn = false;
+        }
+        //열기
+        else{
+            mAdapter.isCheckBoxDraw = true;
+            isListModifyOn = true;
+        }
+        mAdapter.notifyDataSetChanged();
+        mFileList.invalidate();
+    }
+
+    //애니메이션 리스너
+    private class SlidingPageAnimationListener implements Animation.AnimationListener {
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            //슬라이드 열기->닫기
+            if(isPageOpen){
+                slidingPage01.setVisibility(View.INVISIBLE);
+            }
+            //슬라이드 닫기->열기
+            else{
+            }
+        }
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+        @Override
+        public void onAnimationStart(Animation animation) {
+
+        }
+    }
+
+    public void MFOnClick(View v) {
+        switch (v.getId()) {
+            case R.id.mainpage:
+                break;
+            case R.id.pagelist:
+                slide_intent = new Intent(this, FileExplorer.class);
+                startActivity(slide_intent);
+                break;
+            case R.id.pagemake:
+                break;
+            case R.id.notice:
+                break;
+            case R.id.favorite:
+                break;
+            case R.id.recentread:
+                break;
+            case R.id.importfile:
+                break;
+            case R.id.pdfrender:
+                slide_intent = new Intent(this, PDFRenderer.class);
+                startActivity(slide_intent);
+                break;
+        }
+    }
+
+
+    private void getPhotoFromGallery() { // 갤러리에서 이미지 가져오기
+
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+        startActivityForResult(intent, PICK_FROM_ALBUM);
+
+    }
+    private void getPhotoFromCamera() { // 카메라 촬영 후 이미지 가져오기
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // 임시로 사용할 파일의 경로를 생성
+        String url = "TMP_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+        mImageCaptureUri = Uri.fromFile(new File(mRoot+"/Temp/", url));
+
+        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+        startActivityForResult(intent, PICK_FROM_CAMERA);
+    }
+
     private void DeleteDir(String path)
     {
         File file = new File(path);
@@ -370,4 +481,6 @@ public class FileExplorer extends Activity {
         }
         file.delete();    //root 삭제
     }
+
+
 }

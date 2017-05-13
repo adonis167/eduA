@@ -22,22 +22,25 @@
         android:layout_height="match_parent"
         android:scrollbarThumbVertical="@color/colorPrimary"
         android:scrollbarSize="2dp">
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:orientation="vertical">
+
+            <!--메인화면-->
             <LinearLayout
+                android:id="@+id/mainpage"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="80dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:orientation="horizontal"
-                >
+                android:onClick="MFOnClick">
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:onClick="MFOnClick"
                     android:background="@drawable/slide_home"
                     android:layout_marginLeft="20dp"
                     android:layout_marginBottom="2dp"/>
@@ -46,22 +49,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="7dp"
-                    android:onClick="MFOnClick"
                     android:textSize="15dp"
                     android:text="메인화면"/>
             </LinearLayout>
+
+            <!--페이지목록-->
             <LinearLayout
+                android:id="@+id/pagelist"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:orientation="horizontal"
-                >
+                android:onClick="MFOnClick">
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:onClick="MFOnClick"
                     android:background="@drawable/slide_list"
                     android:layout_marginLeft="20dp"/>
                 <TextView
@@ -69,22 +73,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="7dp"
-                    android:onClick="MFOnClick"
                     android:textSize="15dp"
                     android:text="페이지 목록"/>
             </LinearLayout>
+
+            <!--페이지생성-->
             <LinearLayout
+                android:id="@+id/pagemake"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="17dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:orientation="horizontal"
-                >
+                android:onClick="MFOnClick">
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:onClick="MFOnClick"
                     android:background="@drawable/slide_new"
                     android:layout_marginLeft="20dp"/>
                 <TextView
@@ -92,22 +97,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="7dp"
-                    android:onClick="MFOnClick"
                     android:textSize="15dp"
                     android:text="페이지 생성"/>
             </LinearLayout>
+
+            <!--공지사항-->
             <LinearLayout
+                android:id="@+id/notice"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:orientation="horizontal"
-                >
+                android:onClick="MFOnClick">
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:onClick="MFOnClick"
                     android:background="@drawable/slide_notice"
                     android:layout_marginLeft="20dp"/>
                 <TextView
@@ -115,22 +121,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="7dp"
-                    android:onClick="MFOnClick"
                     android:textSize="15dp"
                     android:text="공지사항"/>
             </LinearLayout>
+
+            <!--즐겨찾기-->
             <LinearLayout
+                android:id="@+id/favorite"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:orientation="horizontal"
-                >
+                android:onClick="MFOnClick">
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:onClick="MFOnClick"
                     android:background="@drawable/slide_notice"
                     android:layout_marginLeft="20dp"/>
                 <TextView
@@ -138,22 +145,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="7dp"
-                    android:onClick="MFOnClick"
                     android:textSize="15dp"
                     android:text="즐겨찾기"/>
             </LinearLayout>
+
+            <!--최근열람목록-->
             <LinearLayout
+                android:id="@+id/recentread"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:orientation="horizontal"
-                >
+                android:onClick="MFOnClick">
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:onClick="MFOnClick"
                     android:background="@drawable/slide_notice"
                     android:layout_marginLeft="20dp"/>
                 <TextView
@@ -161,22 +169,23 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="7dp"
-                    android:onClick="MFOnClick"
                     android:textSize="15dp"
-                    android:text="최근 열람 목록"/>
+                    android:text="최근 열람목록"/>
             </LinearLayout>
+
+            <!--가져오기-->
             <LinearLayout
+                android:id="@+id/importfile"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="15dp"
                 android:layout_marginLeft="15dp"
                 android:layout_marginRight="15dp"
                 android:orientation="horizontal"
-                >
+                android:onClick="MFOnClick">
                 <ImageView
                     android:layout_width="30dp"
                     android:layout_height="30dp"
-                    android:onClick="MFOnClick"
                     android:background="@drawable/slide_get"
                     android:layout_marginLeft="20dp"/>
                 <TextView
@@ -184,10 +193,35 @@
                     android:layout_height="wrap_content"
                     android:layout_marginLeft="20dp"
                     android:layout_marginTop="7dp"
-                    android:onClick="MFOnClick"
                     android:textSize="15dp"
                     android:text="가져오기"/>
             </LinearLayout>
+
+            <!--PDF변환-->
+            <LinearLayout
+                android:id="@+id/pdfrender"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="15dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginRight="15dp"
+                android:orientation="horizontal"
+                android:onClick="MFOnClick"
+                >
+                <ImageView
+                    android:layout_width="30dp"
+                    android:layout_height="30dp"
+                    android:background="@drawable/slide_get"
+                    android:layout_marginLeft="20dp"/>
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginLeft="20dp"
+                    android:layout_marginTop="7dp"
+                    android:textSize="15dp"
+                    android:text="PDF변환"/>
+            </LinearLayout>
+
         </LinearLayout>
     </ScrollView>
 </LinearLayout>
