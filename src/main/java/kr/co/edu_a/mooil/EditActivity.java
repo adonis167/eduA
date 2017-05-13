@@ -41,19 +41,16 @@ public class EditActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         Intent intent = getIntent();
-        bm = (Bitmap) intent.getParcelableExtra("bitmap");
+        bm = intent.getParcelableExtra("bitmap");
 
-        //vw = new MyView(this);
-        //setContentView(vw);
-
-        final ToggleButton tb = (ToggleButton) findViewById(R.id.tgb_Masking);
-        Button start = (Button) findViewById(R.id.btn_Start);
+//        final ToggleButton tb = (ToggleButton) findViewById(R.id.tgb_Masking);
+//        Button start = (Button) findViewById(R.id.btn_Start);
     }
 
-    public void mOnClick(View v) {
-        Intent a = new Intent(this, Memorize.class);
-        startActivity(a);
-    }
+//    public void mOnClick(View v) {
+//        Intent a = new Intent(this, Memorize.class);
+//        startActivity(a);
+//    }
 }
 
 

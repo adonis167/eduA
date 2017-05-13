@@ -37,8 +37,8 @@ public class Memorize extends AppCompatActivity{
 
             Canvas c = new Canvas();
 
-            Bitmap mainImage = BitmapFactory.decodeResource(getResources(),R.drawable.subnote);
-            Bitmap mask = BitmapFactory.decodeResource(getResources(), R.drawable.subnote_masking);
+            Bitmap mainImage = BitmapFactory.decodeResource(getResources(),R.drawable.test01);
+            Bitmap mask = BitmapFactory.decodeResource(getResources(), R.drawable.test01_m);
             Bitmap result = Bitmap.createBitmap(mainImage .getWidth(), mainImage .getHeight(), Bitmap.Config.ARGB_8888);
 
             c.setBitmap(result);

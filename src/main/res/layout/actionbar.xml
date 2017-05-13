@@ -23,6 +23,15 @@
         android:layout_height="match_parent"
         android:gravity="right">
         <ImageButton
+            android:id="@+id/btnNewDirectory"
+            android:visibility="gone"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginRight="10dp"
+            android:layout_marginTop="10dp"
+            android:onClick="mOnClick"
+            android:background="@drawable/list_new_folder" />
+        <ImageButton
             android:id="@+id/list_modify_btn"
             android:visibility="gone"
             android:layout_width="wrap_content"
@@ -31,5 +40,6 @@
             android:layout_marginTop="10dp"
             android:onClick="onButton2Clicked"
             android:background="@drawable/list_modify" />
+
     </LinearLayout>
 </LinearLayout>

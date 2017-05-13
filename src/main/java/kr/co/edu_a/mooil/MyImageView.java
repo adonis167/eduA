@@ -7,6 +7,7 @@ import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
+import android.graphics.Rect;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.MotionEvent;
@@ -20,8 +21,8 @@ import static android.R.attr.path;
  */
 
 public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
-    private static int STROKE_WIDTH = 25;
-    private  static int OPACITY = 75;
+    private static int STROKE_WIDTH = 35;
+    private static int OPACITY = 75;
 
     private CanvasThread canvasthread;
     Paint paint = new Paint();
@@ -71,13 +72,22 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     protected void onDraw(Canvas canvas) {
-        Bitmap mapImg = BitmapFactory.decodeResource(getResources(), R.drawable.subnote); //EditActivity.bm;
-        canvas.drawBitmap(mapImg, 0, 0, null);
+        Bitmap mapImg = BitmapFactory.decodeResource(getResources(), R.drawable.test01);
+//        Bitmap mapImg = EditActivity.bm;
+
+        int width = canvas.getWidth();
+        int height = canvas.getHeight();
+
+//        Bitmap resize_bitmap = Bitmap.createScaledBitmap(mapImg, width, height, true);
+
+//        canvas.drawBitmap(resize_bitmap, 0, 0, null);
+        Rect src = new Rect(0, 0, width, height);
+        Rect dst = new Rect(0, 200, width / 2, 200 + height / 2);
+        canvas.drawBitmap(mapImg, src, dst, null);
+
+
         canvas.drawPath(path, paint); // 저장된 path 를 그려라
 
-        //canvas.drawColor(Color.BLACK);
-        //p.setColor(Color.RED);
-        //canvas.drawLine(0, 0, 5000, 5000, p);
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {

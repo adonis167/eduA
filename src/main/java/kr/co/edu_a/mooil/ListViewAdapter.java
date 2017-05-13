@@ -8,6 +8,7 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import java.util.ArrayList;
@@ -41,6 +42,7 @@ public class ListViewAdapter extends BaseAdapter {
         // 화면에 표시될 View(Layout이 inflate된)으로부터 위젯에 대한 참조 획득
         CheckBox listCheckBox = (CheckBox) convertView.findViewById((R.id.listCheckBox));
         ImageView iconImageView = (ImageView) convertView.findViewById(R.id.listFileImage1) ;
+        LinearLayout textLayout = (LinearLayout) convertView.findViewById(R.id.layoutListText);
         TextView titleTextView = (TextView) convertView.findViewById(R.id.listFileText1) ;
         TextView descTextView = (TextView) convertView.findViewById(R.id.listFileText2) ;
         ImageView favorImageView = (ImageView) convertView.findViewById(R.id.listFavorImage01) ;
@@ -55,8 +57,14 @@ public class ListViewAdapter extends BaseAdapter {
         descTextView.setText(listViewItem.getDesc());
         favorImageView.setImageDrawable(listViewItem.getFavor());
 
-        if(isCheckBoxDraw) listCheckBox.setVisibility(View.VISIBLE);
-        else listCheckBox.setVisibility(View.GONE);
+        if(isCheckBoxDraw){
+            listCheckBox.setVisibility(View.VISIBLE);
+            textLayout.setWeightSum(4);
+        }
+        else{
+            listCheckBox.setVisibility(View.GONE);
+            textLayout.setWeightSum(5);
+        }
 
         return convertView;
     }

@@ -40,12 +40,13 @@ public class FileExplorer extends Activity {
     private static final int CROP_FROM_iMAGE = 2;
 
     String mCurrent;
+    String mCurrentView;
     String mRoot;
     TextView mCurrentTxt;
     ListView mFileList;
     ListViewAdapter mAdapter;
     ImageView modifyButton;
-    CheckBox modifyCheckBox;
+    ImageView newFolderButton;
     ArrayList<String> arFiles;
     Uri mImageCaptureUri;
 
@@ -54,6 +55,7 @@ public class FileExplorer extends Activity {
     Animation translateLeftAnim;
     Animation translateRightAnim;
     LinearLayout slidingPage01;
+    LinearLayout subMenuBar01;
 
     Intent slide_intent;
 
@@ -105,8 +107,10 @@ public class FileExplorer extends Activity {
 
         modifyButton = (ImageView)findViewById(R.id.list_modify_btn);
         modifyButton.setVisibility(View.VISIBLE);
-
+        newFolderButton = (ImageView)findViewById(R.id.btnNewDirectory);
+        newFolderButton.setVisibility(View.VISIBLE);
         slidingPage01 = (LinearLayout)findViewById(R.id.slidingPage01);
+        subMenuBar01 = (LinearLayout)findViewById(R.id.subMenuBar01);
         //애니메이션
         translateRightAnim = AnimationUtils.loadAnimation(this, R.anim.translate_right);
         translateLeftAnim = AnimationUtils.loadAnimation(this, R.anim.translate_left);
@@ -205,19 +209,12 @@ public class FileExplorer extends Activity {
 
                 alert.show();
                 break;
-
-            case R.id.btnTakePicture: //카메라로 사진찍기
-                getPhotoFromCamera();
-                break;
-
-            case R.id.btnLoadPicture: //갤러리에서 가져오기
-                getPhotoFromGallery();
-                break;
         }
     }
 
     void refreshFiles(){
-        mCurrentTxt.setText(mCurrent);//현재 PATH를 가져옴
+        mCurrentView = mCurrent.substring(mCurrent.indexOf("eduA"), mCurrent.length()) + "/";
+        mCurrentTxt.setText(mCurrentView);//현재 PATH를 가져옴
         arFiles.clear();//배열리스트를 지움
         mAdapter.clearAll();
         File current = new File(mCurrent);//현재 경로로 File클래스를 만듬
@@ -250,6 +247,163 @@ public class FileExplorer extends Activity {
         mAdapter.notifyDataSetChanged();
     }
 
+    private boolean checkPermission() {
+        int result = ContextCompat.checkSelfPermission(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+        if (result == PackageManager.PERMISSION_GRANTED) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
+    private void requestPermission() {
+
+        if (ActivityCompat.shouldShowRequestPermissionRationale(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+            Toast.makeText(FileExplorer.this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
+        } else {
+            ActivityCompat.requestPermissions(FileExplorer.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+        }
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
+        switch (requestCode) {
+            case PERMISSION_REQUEST_CODE:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.e("value", "Permission Granted, Now you can use local drive .");
+                } else {
+                    Log.e("value", "Permission Denied, You cannot use local drive .");
+                }
+                break;
+        }
+    }
+
+    public void onButton1Clicked(View v){
+        //닫기
+        if(isPageOpen){
+            //애니메이션 시작
+            slidingPage01.startAnimation(translateLeftAnim);
+            for(int i=0; i<mFileList.getChildCount(); i++)//mainPage 이하 활성화
+                mFileList.getChildAt(i).setClickable(true);
+            isPageOpen = false;
+        }
+        //열기
+        else{
+            slidingPage01.setVisibility(View.VISIBLE);
+            slidingPage01.startAnimation(translateRightAnim);
+            slidingPage01.setClickable(true);
+            for(int i=0; i<mFileList.getChildCount(); i++)//비활성화
+                mFileList.getChildAt(i).setClickable(false);
+            isPageOpen = true;
+        }
+    }
+    public void onButton2Clicked(View v){
+        //닫기
+        if(isListModifyOn){
+            subMenuBar01.setVisibility(View.GONE);
+            mAdapter.isCheckBoxDraw = false;
+            isListModifyOn = false;
+        }
+        //열기
+        else{
+            subMenuBar01.setVisibility(View.VISIBLE);
+            mAdapter.isCheckBoxDraw = true;
+            isListModifyOn = true;
+        }
+        mAdapter.notifyDataSetChanged();
+        mFileList.invalidate();
+    }
+
+    //애니메이션 리스너
+    private class SlidingPageAnimationListener implements Animation.AnimationListener {
+        @Override
+        public void onAnimationEnd(Animation animation) {
+            //슬라이드 열기->닫기
+            if(isPageOpen){
+                slidingPage01.setVisibility(View.INVISIBLE);
+            }
+            //슬라이드 닫기->열기
+            else{
+            }
+        }
+        @Override
+        public void onAnimationRepeat(Animation animation) {
+
+        }
+        @Override
+        public void onAnimationStart(Animation animation) {
+
+        }
+    }
+
+    public void MFOnClick(View v) {
+        switch (v.getId()) {
+            case R.id.mainpage:
+                break;
+            case R.id.pagelist:
+                slide_intent = new Intent(this, FileExplorer.class);
+                startActivity(slide_intent);
+                break;
+            case R.id.pagemake:
+                final CharSequence[] items = {"카메라로 사진찍기", "갤러리에서 가져오기"};
+                AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+
+                // 제목셋팅
+                alertDialogBuilder.setTitle("페이지 생성");
+                alertDialogBuilder.setItems(items,
+                        new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog,
+                                                int id) {
+                                dialog.dismiss();
+                                // 프로그램을 종료한다
+                                if (id == 0) {
+                                    getPhotoFromCamera();
+                                }
+                                else {
+                                    getPhotoFromGallery();
+                                }
+
+                            }
+                        });
+
+                // 다이얼로그 생성
+                AlertDialog alertDialog = alertDialogBuilder.create();
+
+                // 다이얼로그 보여주기
+                alertDialog.show();
+                break;
+            case R.id.notice:
+                break;
+            case R.id.favorite:
+                break;
+            case R.id.recentread:
+                break;
+            case R.id.importfile:
+                break;
+            case R.id.pdfrender:
+                slide_intent = new Intent(this, PDFRenderer.class);
+                startActivity(slide_intent);
+                break;
+        }
+    }
+    private void getPhotoFromGallery() { // 갤러리에서 이미지 가져오기
+
+        Intent intent = new Intent(Intent.ACTION_PICK);
+        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
+        startActivityForResult(intent, PICK_FROM_ALBUM);
+
+    }
+    private void getPhotoFromCamera() { // 카메라 촬영 후 이미지 가져오기
+
+        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
+
+        // 임시로 사용할 파일의 경로를 생성
+        String url = "TMP_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+        mImageCaptureUri = Uri.fromFile(new File(mRoot+"/Temp/", url));
+
+        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
+        startActivityForResult(intent, PICK_FROM_CAMERA);
+    }
 
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -334,137 +488,7 @@ public class FileExplorer extends Activity {
         }
     }
 
-    private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
-        if (result == PackageManager.PERMISSION_GRANTED) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
-    private void requestPermission() {
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Toast.makeText(FileExplorer.this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
-        } else {
-            ActivityCompat.requestPermissions(FileExplorer.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
-        }
-    }
-
-    @Override
-    public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
-        switch (requestCode) {
-            case PERMISSION_REQUEST_CODE:
-                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.e("value", "Permission Granted, Now you can use local drive .");
-                } else {
-                    Log.e("value", "Permission Denied, You cannot use local drive .");
-                }
-                break;
-        }
-    }
-
-    public void onButton1Clicked(View v){
-        //닫기
-        if(isPageOpen){
-            //애니메이션 시작
-            slidingPage01.startAnimation(translateLeftAnim);
-            for(int i=0; i<mFileList.getChildCount(); i++)//mainPage 이하 활성화
-                mFileList.getChildAt(i).setClickable(true);
-            isPageOpen = false;
-        }
-        //열기
-        else{
-            slidingPage01.setVisibility(View.VISIBLE);
-            slidingPage01.startAnimation(translateRightAnim);
-            slidingPage01.setClickable(true);
-            for(int i=0; i<mFileList.getChildCount(); i++)//비활성화
-                mFileList.getChildAt(i).setClickable(false);
-            isPageOpen = true;
-        }
-    }
-    public void onButton2Clicked(View v){
-        //닫기
-        if(isListModifyOn){
-            mAdapter.isCheckBoxDraw = false;
-            isListModifyOn = false;
-        }
-        //열기
-        else{
-            mAdapter.isCheckBoxDraw = true;
-            isListModifyOn = true;
-        }
-        mAdapter.notifyDataSetChanged();
-        mFileList.invalidate();
-    }
-
-    //애니메이션 리스너
-    private class SlidingPageAnimationListener implements Animation.AnimationListener {
-        @Override
-        public void onAnimationEnd(Animation animation) {
-            //슬라이드 열기->닫기
-            if(isPageOpen){
-                slidingPage01.setVisibility(View.INVISIBLE);
-            }
-            //슬라이드 닫기->열기
-            else{
-            }
-        }
-        @Override
-        public void onAnimationRepeat(Animation animation) {
-
-        }
-        @Override
-        public void onAnimationStart(Animation animation) {
-
-        }
-    }
-
-    public void MFOnClick(View v) {
-        switch (v.getId()) {
-            case R.id.mainpage:
-                break;
-            case R.id.pagelist:
-                slide_intent = new Intent(this, FileExplorer.class);
-                startActivity(slide_intent);
-                break;
-            case R.id.pagemake:
-                break;
-            case R.id.notice:
-                break;
-            case R.id.favorite:
-                break;
-            case R.id.recentread:
-                break;
-            case R.id.importfile:
-                break;
-            case R.id.pdfrender:
-                slide_intent = new Intent(this, PDFRenderer.class);
-                startActivity(slide_intent);
-                break;
-        }
-    }
-
-
-    private void getPhotoFromGallery() { // 갤러리에서 이미지 가져오기
-
-        Intent intent = new Intent(Intent.ACTION_PICK);
-        intent.setType(android.provider.MediaStore.Images.Media.CONTENT_TYPE);
-        startActivityForResult(intent, PICK_FROM_ALBUM);
-
-    }
-    private void getPhotoFromCamera() { // 카메라 촬영 후 이미지 가져오기
-
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-
-        // 임시로 사용할 파일의 경로를 생성
-        String url = "TMP_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-        mImageCaptureUri = Uri.fromFile(new File(mRoot+"/Temp/", url));
-
-        intent.putExtra(android.provider.MediaStore.EXTRA_OUTPUT, mImageCaptureUri);
-        startActivityForResult(intent, PICK_FROM_CAMERA);
-    }
 
     private void DeleteDir(String path)
     {
