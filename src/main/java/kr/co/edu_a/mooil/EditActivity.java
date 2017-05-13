@@ -28,6 +28,8 @@ import android.widget.ToggleButton;
 import java.io.IOException;
 import java.util.ArrayList;
 
+import uk.co.senab.photoview.PhotoViewAttacher;
+
 import static android.R.attr.x;
 import static android.R.attr.y;
 
@@ -36,12 +38,18 @@ public class EditActivity extends AppCompatActivity {
     private static final int STROKE_WIDTH_BOLD = 35;
     public static Bitmap bm;
 
+    ImageView mPinchView;
+    PhotoViewAttacher mAttacher;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
         Intent intent = getIntent();
         bm = intent.getParcelableExtra("bitmap");
+
+        mPinchView = (ImageView) findViewById(R.id.pinchview);
+        mAttacher = new PhotoViewAttacher(mPinchView);
 
 //        final ToggleButton tb = (ToggleButton) findViewById(R.id.tgb_Masking);
 //        Button start = (Button) findViewById(R.id.btn_Start);

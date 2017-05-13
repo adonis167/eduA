@@ -72,7 +72,7 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     protected void onDraw(Canvas canvas) {
-        Bitmap mapImg = BitmapFactory.decodeResource(getResources(), R.drawable.test01);
+/*        Bitmap mapImg = BitmapFactory.decodeResource(getResources(), R.drawable.test01);
 //        Bitmap mapImg = EditActivity.bm;
 
         int width = canvas.getWidth();
@@ -83,7 +83,7 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
 //        canvas.drawBitmap(resize_bitmap, 0, 0, null);
         Rect src = new Rect(0, 0, width, height);
         Rect dst = new Rect(0, 200, width / 2, 200 + height / 2);
-        canvas.drawBitmap(mapImg, src, dst, null);
+        canvas.drawBitmap(mapImg, src, dst, null);*/
 
 
         canvas.drawPath(path, paint); // 저장된 path 를 그려라
