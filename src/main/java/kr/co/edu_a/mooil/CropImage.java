@@ -1,10 +1,5 @@
 package kr.co.edu_a.mooil;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Bitmap.CompressFormat;
@@ -20,6 +15,11 @@ import android.view.MotionEvent;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.Toast;
+
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 
 public class CropImage extends ImageView {
 	private static final String TAG = "Crop_Image";
