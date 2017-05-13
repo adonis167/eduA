@@ -6,12 +6,14 @@
     android:layout_height="match_parent"
     android:layout_gravity="center"
     tools:context=".EditActivity">
+
     <ImageView
         android:id="@+id/pinchview"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:src="@drawable/test00"
-        android:clickable="false"/>
+        android:splitMotionEvents="true"/>
+
     <view
         android:id="@+id/main_imagemap"
         class="kr.co.edu_a.mooil.MyImageView"
@@ -19,7 +21,7 @@
         android:layout_height="match_parent"
         android:alpha="0.998"
         android:background="#00ffffff"
-        android:clickable="false"/>
+        android:splitMotionEvents="false"/>
 
 
     <!--<LinearLayout-->

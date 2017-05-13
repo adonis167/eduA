@@ -72,19 +72,6 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     protected void onDraw(Canvas canvas) {
-/*        Bitmap mapImg = BitmapFactory.decodeResource(getResources(), R.drawable.test01);
-//        Bitmap mapImg = EditActivity.bm;
-
-        int width = canvas.getWidth();
-        int height = canvas.getHeight();
-
-//        Bitmap resize_bitmap = Bitmap.createScaledBitmap(mapImg, width, height, true);
-
-//        canvas.drawBitmap(resize_bitmap, 0, 0, null);
-        Rect src = new Rect(0, 0, width, height);
-        Rect dst = new Rect(0, 200, width / 2, 200 + height / 2);
-        canvas.drawBitmap(mapImg, src, dst, null);*/
-
 
         canvas.drawPath(path, paint); // 저장된 path 를 그려라
 
@@ -109,22 +96,34 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
             }
         }
     }
+
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        float x = event.getX();
-        float y = event.getY();
+        int pointer_count = event.getPointerCount();
+        if(pointer_count == 1) {
+            float x = event.getX();
+            float y = event.getY();
 
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                path.moveTo(x, y); // 자취에 그리지 말고 위치만 이동해라
-                break;
-            case MotionEvent.ACTION_MOVE:
-                path.lineTo(x, y); // 자취에 선을 그려라
-                break;
-            case MotionEvent.ACTION_UP:
-                break;
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    path.moveTo(x, y); // 자취에 그리지 말고 위치만 이동해라
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    path.lineTo(x, y); // 자취에 선을 그려라
+                    break;
+                case MotionEvent.ACTION_UP:
+                    break;
+            }
+            invalidate(); // 화면을 다시그려라
+            return true;
         }
-        invalidate(); // 화면을 다시그려라
-        return true;
+        else if (pointer_count == 2){
+
+
+            return false;
+        }
+        else {
+            return false;
+        }
     }
 }

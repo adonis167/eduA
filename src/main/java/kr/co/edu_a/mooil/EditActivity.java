@@ -34,12 +34,9 @@ import static android.R.attr.x;
 import static android.R.attr.y;
 
 public class EditActivity extends AppCompatActivity {
-    private static final int STROKE_WIDTH_LIGHT = 20;
-    private static final int STROKE_WIDTH_BOLD = 35;
     public static Bitmap bm;
-
-    ImageView mPinchView;
-    PhotoViewAttacher mAttacher;
+    public static ImageView mPinchView;
+    public static PhotoViewAttacher mAttacher;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -51,14 +48,7 @@ public class EditActivity extends AppCompatActivity {
         mPinchView = (ImageView) findViewById(R.id.pinchview);
         mAttacher = new PhotoViewAttacher(mPinchView);
 
-//        final ToggleButton tb = (ToggleButton) findViewById(R.id.tgb_Masking);
-//        Button start = (Button) findViewById(R.id.btn_Start);
     }
-
-//    public void mOnClick(View v) {
-//        Intent a = new Intent(this, Memorize.class);
-//        startActivity(a);
-//    }
 }
 
 
