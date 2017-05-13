@@ -1,0 +1,118 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#FFFFFF">
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+        <!--상단바-->
+        <include
+            android:id="@+id/actionBar01"
+            layout="@layout/actionbar"/>
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="20dp"
+                android:background="@drawable/underline"
+                android:text="현재 경로:   "
+                android:textStyle="bold"
+                android:textSize="14dp" />
+            <TextView
+                android:id="@+id/current"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:background="@drawable/underline"
+                android:text="current"
+                android:textSize="14dp" />
+        </LinearLayout>
+
+
+        <ListView
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:id="@+id/filelist"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1"/>
+        <include
+            android:visibility="gone"
+            android:id="@+id/subMenuBar01"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            layout="@layout/sub_menu_bar" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:visibility="gone">
+            <Button
+                android:id="@+id/btnroot"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="mOnClick"
+                android:text="HOME"/>
+            <Button
+                android:id="@+id/btnup"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="mOnClick"
+                android:text="상위폴더"/>
+            <Button
+                android:id="@+id/btnNewDirectory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="mOnClick"
+                android:text="새폴더"/>
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:visibility="gone">
+            <Button
+                android:id="@+id/btnTakePicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="mOnClick"
+                android:text="카메라로 사진찍기"/>
+            <Button
+                android:id="@+id/btnLoadPicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="mOnClick"
+                android:text="갤러리에서 가져오기"/>
+            <Button
+                android:id="@+id/btnRemoveDirectory"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:onClick="mOnClick"
+                android:text="삭제"/>
+        </LinearLayout>
+
+
+    </LinearLayout>
+    <!-- 사이드바 -->
+    <include
+        android:id="@+id/slidingPage01"
+        layout="@layout/sidebar"/>
+</FrameLayout>
+
+
+
+
