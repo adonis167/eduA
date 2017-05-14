@@ -159,8 +159,23 @@ public class FileExplorer extends Activity {
 
                         else //파일이면
                         {
-                            /** 이 부분 수정 필요 --JihoYoon **/
-                            Toast.makeText(FileExplorer.this, arFiles.get(position), 0).show();
+                            File current = new File(mCurrent);
+                            String[] files = current.list();
+                            ArrayList<String> InFolderFiles = new ArrayList<String>();
+
+                            for(int i = 0; i < files.length;i++){
+                                String tempPath = mCurrent + "/" + files[i];
+                                File tempf = new File(tempPath);
+                                if(!tempf.isDirectory()){
+                                    InFolderFiles.add(mCurrent + "/" + files[i]);
+                                }
+                            }
+
+                            String MainFilePath = mCurrent + "/" + arFiles.get(position);
+                            Intent intent = new Intent(FileExplorer.this, PageViewer.class);
+                            intent.putExtra("main_file_path", MainFilePath);
+                            intent.putExtra("in_folder_files", InFolderFiles);
+                            startActivity(intent);
                         }
                     }
                 }
@@ -168,13 +183,6 @@ public class FileExplorer extends Activity {
 
     public void mOnClick(View v){
         switch(v.getId()){
-            case R.id.btnRemoveDirectory:
-                DeleteDir(mRoot+"/Temp");
-                DeleteDir(mRoot+"/Convert");
-                DeleteDir(mRoot+"/Import");
-                mCurrent = mRoot;
-                refreshFiles();
-                break;
 
             case R.id.btnNewDirectory: //새폴더
                 AlertDialog.Builder alert = new AlertDialog.Builder(this);
@@ -345,6 +353,7 @@ public class FileExplorer extends Activity {
                 startActivity(slide_intent);
                 break;
             case R.id.pagemake:
+                onButton1Clicked(v);
                 final CharSequence[] items = {"카메라로 사진찍기", "갤러리에서 가져오기"};
                 AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
 
@@ -408,6 +417,7 @@ public class FileExplorer extends Activity {
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
+
         if (resultCode != RESULT_OK)
             return;
 
@@ -444,26 +454,52 @@ public class FileExplorer extends Activity {
                 final Bundle extras = data.getExtras();
 
                 // CROP된 이미지를 저장하기 위한 FILE 경로
-                String filePath = mCurrent+"/"+System.currentTimeMillis()+".jpg";
-                Bitmap photo = null;
+                AlertDialog.Builder alert = new AlertDialog.Builder(FileExplorer.this);
+                alert.setTitle("페이지 생성");
+                alert.setMessage("페이지 이름을 입력하세요.");
 
-                if(extras != null)
-                {
-                    photo = extras.getParcelable("data"); // CROP된 BITMAP
-                    //iv.setImageBitmap(photo); // 레이아웃의 이미지칸에 CROP된 BITMAP을 보여줌
-                    storeCropImage(photo, filePath); // CROP된 이미지를 외부저장소, 앨범에 저장한다.
-                }
-                // 임시 파일 삭제
-                File f = new File(mImageCaptureUri.getPath());
-                if(f.exists())
-                {
-                    f.delete();
-                }
+                final EditText name = new EditText(this);
+                alert.setView(name);
 
-                Intent intent = new Intent(this, EditActivity.class);
-                intent.putExtra("bitmap", photo);
-                startActivity(intent);
-                break;
+                alert.setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String PageName = name.getText().toString();
+                        String pagePath = mCurrent + "/" + PageName + ".jpg";
+                        File file = new File(pagePath);
+
+
+                        /** 수정필요 **/
+                        if (file.exists()) {
+                            Toast.makeText(FileExplorer.this, "이미 같은 이름의 파일이 존재합니다.", Toast.LENGTH_SHORT).show();
+                        }
+
+                        String filePath = mCurrent+"/" + PageName + ".jpg";
+                        Bitmap photo = null;
+
+                        if(extras != null)
+                        {
+                            photo = extras.getParcelable("data"); // CROP된 BITMAP
+                            storeCropImage(photo, filePath); // CROP된 이미지를 외부저장소, 앨범에 저장한다.
+                        }
+                        // 임시 파일 삭제
+                        File f = new File(mImageCaptureUri.getPath());
+                        if(f.exists())
+                        {
+                            f.delete();
+                        }
+
+                        refreshFiles();//리프레쉬
+
+                    }
+                });
+
+                alert.setNegativeButton("취소",new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                    }
+                });
+
+                alert.show();
+
             }
         }
     }
