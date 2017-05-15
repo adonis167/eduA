@@ -3,6 +3,7 @@
     android:orientation="horizontal" android:layout_width="match_parent"
     android:layout_height="match_parent">
     <TextView
+        android:id="@+id/movefile"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
@@ -11,6 +12,7 @@
         android:textColor="#ffffff"
         android:text="이동"/>
     <TextView
+        android:id="@+id/deletefile"
         android:layout_width="0dp"
         android:layout_weight="1"
         android:layout_height="match_parent"
@@ -19,6 +21,7 @@
         android:textColor="#ffffff"
         android:text="삭제"/>
     <TextView
+        android:id="@+id/sharefile"
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"

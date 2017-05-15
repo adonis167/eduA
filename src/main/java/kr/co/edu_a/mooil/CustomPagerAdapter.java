@@ -1,10 +1,14 @@
 package kr.co.edu_a.mooil;
 
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.support.v4.view.PagerAdapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
+
+import java.io.File;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -24,7 +28,8 @@ public class CustomPagerAdapter extends PagerAdapter {
     @Override
     public int getCount() {
         // TODO Auto-generated method stub
-        return 10; //이미지 개수 리턴(그림이 10개라서 10을 리턴)
+        return PageViewer.nFiles;
+//        return 10; //이미지 개수 리턴(그림이 10개라서 10을 리턴)
     }
 
 
@@ -52,7 +57,18 @@ public class CustomPagerAdapter extends PagerAdapter {
         //현재 position에 해당하는 이미지를 setting
 
         /** 수정필요 **/
-        img.setImageResource(R.drawable.gametitle_01+position);
+//        int padding = context.getResources().getDimensionPixelSize(R.dimen.padding_medium);
+//        imageView.setPadding(padding, padding, padding, padding);
+//        ImageView.setScaleType(ImageView.ScaleType.CENTER_INSIDE);
+
+        File imgFile = new File(PageViewer.InFolderFiles.get(position));
+
+        if(imgFile.exists()) {
+            Bitmap bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+            img.setImageBitmap(bm);
+        }
+
+        //        img.setImageResource(R.drawable.gametitle_01+position);
 
         //ViewPager에 만들어 낸 View 추가
         container.addView(view);
