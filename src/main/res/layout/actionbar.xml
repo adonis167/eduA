@@ -29,7 +29,7 @@
             android:layout_height="wrap_content"
             android:layout_marginRight="10dp"
             android:layout_marginTop="10dp"
-            android:onClick="mOnClick"
+            android:onClick="onButton3Clicked"
             android:background="@drawable/list_new_folder" />
         <ImageButton
             android:id="@+id/list_modify_btn"

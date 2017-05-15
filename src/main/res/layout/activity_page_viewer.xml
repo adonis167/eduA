@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/pageviewer"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="9"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+        <Button
+            android:id="@+id/editmask"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="마스킹편집"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/startmemorize"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="암기시작"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
+
+</LinearLayout>
