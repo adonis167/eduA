@@ -34,8 +34,6 @@
                 android:text="current"
                 android:textSize="14dp" />
         </LinearLayout>
-
-
         <ListView
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
@@ -48,8 +46,7 @@
             android:id="@+id/subMenuBar01"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            layout="@layout/sub_menu_bar" />
-
+            layout="@layout/sub_menu_bar"/>
     </LinearLayout>
     <!-- 사이드바 -->
     <include

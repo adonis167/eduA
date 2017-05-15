@@ -17,6 +17,8 @@ public class CropImageActivity extends Activity implements OnClickListener {
 		ci = (CropImage)findViewById(R.id.crop_view);
 		findViewById(R.id.btn_ok).setOnClickListener(this);
 		findViewById(R.id.btn_cancle).setOnClickListener(this);
+
+
 	}
 	
 	public void onClick(View v) {

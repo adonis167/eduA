@@ -6,6 +6,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -29,6 +30,7 @@ import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.ArrayList;
+import java.util.Vector;
 
 public class FileExplorer extends Activity {
     private static final int PERMISSION_REQUEST_CODE = 9;
@@ -37,6 +39,7 @@ public class FileExplorer extends Activity {
     private static final int CROP_FROM_iMAGE = 2;
 
     String mCurrent;
+    String mCutPath;
     String mCurrentView;
     String mRoot;
     TextView mCurrentTxt;
@@ -46,6 +49,10 @@ public class FileExplorer extends Activity {
     ImageView newFolderButton;
     ArrayList<String> arFiles;
     Uri mImageCaptureUri;
+
+    Vector<String> vecStrCutPath;
+
+    boolean isNowCut;
 
     boolean isPageOpen = false;
     boolean isListModifyOn = false;
@@ -101,7 +108,7 @@ public class FileExplorer extends Activity {
         mFileList.setAdapter(mAdapter);//리스트뷰에 어댑터 연결
         mFileList.setOnItemClickListener(mItemClickListener);//리스너 연결
         refreshFiles();
-
+        mFileList.invalidate();
         modifyButton = (ImageView)findViewById(R.id.list_modify_btn);
         modifyButton.setVisibility(View.VISIBLE);
         newFolderButton = (ImageView)findViewById(R.id.btnNewDirectory);
@@ -190,6 +197,7 @@ public class FileExplorer extends Activity {
         if(files != null){
             //여기서 출력을 해줌
             if(mCurrent.compareTo(mRoot) != 0) {
+
                 mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_home), ".", "Home", ContextCompat.getDrawable(this, R.drawable.list_null));
                 arFiles.add(".");
                 mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_back), "..", "Back", ContextCompat.getDrawable(this, R.drawable.list_null));
@@ -528,23 +536,107 @@ public class FileExplorer extends Activity {
         }
     }
 
-
-
-    private void DeleteDir(String path)
+    //Checked Path를 리턴 받음
+    private Vector<String> FindSelectedPath()
     {
-        File file = new File(path);
-        File[] childFileList = file.listFiles();
-        for(File childFile : childFileList)
+        Vector<String> vecStrReturnTarget = new Vector<>(1);
+        for(int i=0; i<mFileList.getCount(); i++)
         {
-            if(childFile.isDirectory()) {
-                DeleteDir(childFile.getAbsolutePath());     //하위 디렉토리 루프
+            boolean test = mAdapter.getChecker(i);
+            if(test == true)
+            {
+                vecStrReturnTarget.add(arFiles.get(i));
+            }
+        }
+        return vecStrReturnTarget;
+    }
+
+    //삭제 버튼
+    public void onButtonClickSub(View v)
+    {
+        if(v.getId() == R.id.deletefile && isNowCut == false) {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);     // 여기서 this는 Activity의 this
+            // 여기서 부터는 알림창의 속성 설정
+            builder.setTitle("정말 삭제 하시겠습니까?")        // 제목 설정
+                    .setCancelable(false)        // 뒤로 버튼 클릭시 취소 가능 설정
+                    .setPositiveButton("확인", new DialogInterface.OnClickListener() {
+                        // 확인 버튼 클릭시 설정
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            Vector<String> vecStrPath;
+                            vecStrPath = FindSelectedPath();
+                            for (int i = 0; i < vecStrPath.size(); i++) {
+                                String path = vecStrPath.get(i);
+                                deleteDir(mCurrent + "/" + path);
+                            }
+                            mFileList.invalidate();
+                            refreshFiles();
+                        }
+                    })
+                    .setNegativeButton("취소", new DialogInterface.OnClickListener() {
+                        // 취소 버튼 클릭시 설정
+                        public void onClick(DialogInterface dialog, int whichButton) {
+                            dialog.cancel();
+                        }
+                    });
+            AlertDialog dialog = builder.create();    // 알림창 객체 생성
+            dialog.show();    // 알림창 띄우기
+        }
+        else if(v.getId() == R.id.movefile)
+        {
+            if(isNowCut == false)
+            {
+                moveDirCut();
+                isNowCut = true;
+                mAdapter.isCheckBoxDraw = false;
+                isListModifyOn = false;
+                findViewById(R.id.deletefile).setBackgroundColor(Color.parseColor("#CCCCCC"));
+                findViewById(R.id.sharefile).setBackgroundColor(Color.parseColor("#CCCCCC"));
             }
             else {
-                childFile.delete();    //하위 파일삭제
+                for(int i=0; i<vecStrCutPath.size(); i++) {
+                    moveDirCopy(vecStrCutPath.get(i));
+                }
+                vecStrCutPath.clear();
+                isNowCut = false;
+                isListModifyOn = false;
+                subMenuBar01.setVisibility(View.GONE);
+                findViewById(R.id.deletefile).setBackgroundColor(Color.parseColor("#303030"));
+                findViewById(R.id.sharefile).setBackgroundColor(Color.parseColor("#303030"));
+            }
+            mFileList.invalidate();
+            refreshFiles();
+        }
+    }
+
+    private void moveDirCut()
+    {
+        mAdapter.isCheckBoxDraw = false;
+        isListModifyOn = false;
+        vecStrCutPath = FindSelectedPath();
+        mCutPath = mCurrent;
+    }
+    private void moveDirCopy(String path)
+    {
+        File orgFile = new File(mCutPath + "/" + path);
+        File newFile = new File(mCurrent + "/" + path);
+        if(orgFile.exists()) {
+            orgFile.renameTo(newFile);
+        }
+    }
+    //삭제, input Path 이하 Path 삭제
+    private void deleteDir(String path)
+    {
+        File file = new File(path);
+        if(file.isDirectory()) {
+            File[] childFileList = file.listFiles();
+            for (File childFile : childFileList) {
+                if (childFile.isDirectory()) {
+                    deleteDir(childFile.getAbsolutePath());     //하위 디렉토리 루프
+                } else {
+                    childFile.delete();    //하위 파일삭제
+                }
             }
         }
         file.delete();    //root 삭제
     }
-
-
 }

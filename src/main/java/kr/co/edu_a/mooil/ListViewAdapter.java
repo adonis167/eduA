@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -49,7 +50,10 @@ public class ListViewAdapter extends BaseAdapter {
 
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         ListViewItem listViewItem = listViewItemList.get(position);
-
+        listCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+                                                public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
+                                                        listViewItemList.get(pos).setCheck(isChecked);
+                                                } });
         // 아이템 내 각 위젯에 데이터 반영
         listCheckBox.setChecked(listViewItem.getCheck());
         iconImageView.setImageDrawable(listViewItem.getIcon());
@@ -93,6 +97,12 @@ public class ListViewAdapter extends BaseAdapter {
 
         listViewItemList.add(item);
     }
+    public boolean getChecker(int position) {
+        return listViewItemList.get(position).getCheck() ;
+    }
+    public void setChecker(int position) {
+        listViewItemList.get(position).setCheck(getChecker(position) ? false : true);
+    }
 
     public void clearAll()
     {
@@ -102,4 +112,6 @@ public class ListViewAdapter extends BaseAdapter {
     public void setCheckBoxVisibility(boolean isVisibility){
         isCheckBoxDraw = isVisibility;
     }
+
+    public void checkBoxChangedListener(int position, boolean isCheck){ listViewItemList.get(position).setCheck(isCheck); }
 }
