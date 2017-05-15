@@ -68,8 +68,6 @@ public class CustomPagerAdapter extends PagerAdapter {
             img.setImageBitmap(bm);
         }
 
-        //        img.setImageResource(R.drawable.gametitle_01+position);
-
         //ViewPager에 만들어 낸 View 추가
         container.addView(view);
 
@@ -77,7 +75,7 @@ public class CustomPagerAdapter extends PagerAdapter {
         return view;
     }
 
-    //화면에 보이지 않은 View는파쾨를 해서 메모리를 관리함.
+    //화면에 보이지 않은 View는파괴를 해서 메모리를 관리함.
     //첫번째 파라미터 : ViewPager
     //두번째 파라미터 : 파괴될 View의 인덱스(가장 처음부터 0,1,2,3...)
     //세번째 파라미터 : 파괴될 객체(더 이상 보이지 않은 View 객체)

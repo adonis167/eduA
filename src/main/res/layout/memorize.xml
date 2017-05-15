@@ -6,8 +6,38 @@
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1">
-
     </FrameLayout>
+    <kr.co.edu_a.mooil.ScratchImageView
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:id="@+id/memorizeImageView"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:background="@android:color/white"
+        android:layout_weight="9">
+    </kr.co.edu_a.mooil.ScratchImageView>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:orientation="horizontal"
+        android:layout_weight="1">
+        <Button
+            android:id="@+id/memorizePrevious"
+            android:onClick="memOnClick"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Privious"
+            android:layout_weight="1"/>
+        <Button
+            android:id="@+id/memorizeNext"
+            android:onClick="memOnClick"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:text="Next"
+            android:layout_weight="1"/>
+
+    </LinearLayout>
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="40dp">

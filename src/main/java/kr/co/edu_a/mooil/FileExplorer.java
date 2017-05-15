@@ -477,22 +477,23 @@ public class FileExplorer extends Activity {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         String PageName = name.getText().toString();
                         String pagePath = mCurrent + "/" + PageName + ".jpg";
+                        String maskPath = mCurrent + "/" + "MSK_" + PageName + ".png";
                         File file = new File(pagePath);
-
 
                         /** 수정필요 **/
                         if (file.exists()) {
                             Toast.makeText(FileExplorer.this, "이미 같은 이름의 파일이 존재합니다.", Toast.LENGTH_SHORT).show();
                         }
 
-                        String filePath = mCurrent+"/" + PageName + ".jpg";
-                        Bitmap photo = null;
+                        Bitmap original = null;
 
                         if(extras != null)
                         {
-                            photo = extras.getParcelable("data"); // CROP된 BITMAP
-                            storeCropImage(photo, filePath); // CROP된 이미지를 외부저장소, 앨범에 저장한다.
+                            original = extras.getParcelable("data"); // CROP된 BITMAP
+                            storeCropImage(original, pagePath); // CROP된 이미지를 외부저장소, 앨범에 저장한다.
+                            storeMaskingImage(original, maskPath);
                         }
+
                         // 임시 파일 삭제
                         File f = new File(mImageCaptureUri.getPath());
                         if(f.exists())
@@ -531,10 +532,35 @@ public class FileExplorer extends Activity {
 
             out.flush();
             out.close();
+
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
+    public static void storeMaskingImage(Bitmap original, String filePath) {
+        int width = original.getWidth();
+        int height = original.getHeight();
+
+//        Bitmap background = BitmapFactory.decodeResource(getResources(),R.drawable.basic_masking);
+        Bitmap mask = Bitmap.createBitmap(width, height, Bitmap.Config.ARGB_8888);
+
+        File copyFile = new File(filePath);
+        BufferedOutputStream out = null;
+
+        try {
+
+            copyFile.createNewFile();
+            out = new BufferedOutputStream(new FileOutputStream(copyFile));
+            mask.compress(Bitmap.CompressFormat.PNG, 0, out);
+
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
 
     //Checked Path를 리턴 받음
     private Vector<String> FindSelectedPath()
