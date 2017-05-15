@@ -257,6 +257,7 @@ public class FileExplorer extends Activity {
         if(isPageOpen){
             //애니메이션 시작
             slidingPage01.startAnimation(translateLeftAnim);
+            slidingPage01.setClickable(false);
             for(int i=0; i<mFileList.getChildCount(); i++)//mainPage 이하 활성화
                 mFileList.getChildAt(i).setClickable(true);
             isPageOpen = false;

@@ -1,20 +1,14 @@
 package kr.co.edu_a.mooil;
 
 import android.content.Context;
-import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
 import android.graphics.Path;
-import android.graphics.Rect;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-
-import static android.R.attr.path;
 
 /**
  * Created by JihoYoon on 2017-04-02.
@@ -116,7 +110,6 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
         invalidate(); // 화면을 다시그려라
         return true;
     }
-}
 
     public static void propertySet(int strock, int opacity)
     {

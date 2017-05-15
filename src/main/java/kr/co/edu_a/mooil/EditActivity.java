@@ -7,6 +7,7 @@ import android.graphics.BitmapFactory;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import android.view.View;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -20,11 +21,11 @@ public class EditActivity extends AppCompatActivity {
     public static ImageView mPinchView;
     public static PhotoViewAttacher mAttacher;
     boolean isBtnLayerOn = false;
-
+/*
     Animation aniBtnOn2;
     Animation aniBtnOff2;
     Animation aniBtnOn3;
-    Animation aniBtnOff3;
+    Animation aniBtnOff3;*/
 
 
 
@@ -57,10 +58,11 @@ public class EditActivity extends AppCompatActivity {
         mAttacher = new PhotoViewAttacher(mPinchView);
 
         //Animation Load
+        /*
         aniBtnOn2 = AnimationUtils.loadAnimation(this, R.anim.edit_btn_on2);
         aniBtnOff2 = AnimationUtils.loadAnimation(this, R.anim.edit_btn_off2);
         aniBtnOn3 = AnimationUtils.loadAnimation(this, R.anim.edit_btn_on3);
-        aniBtnOff3 = AnimationUtils.loadAnimation(this, R.anim.edit_btn_off3);
+        aniBtnOff3 = AnimationUtils.loadAnimation(this, R.anim.edit_btn_off3);*/
     }
 
 
@@ -83,7 +85,7 @@ public class EditActivity extends AppCompatActivity {
             isPageOpen = true;
         }*/
 
-        //닫음
+      /*  //닫음
         if(isBtnLayerOn)
         {
             findViewById(R.id.editButton2).startAnimation(aniBtnOff2);
@@ -122,7 +124,7 @@ public class EditActivity extends AppCompatActivity {
         if(v.getId()==R.id.editButton6)
         {
 
-        }
+        }*/
     }
 }
 
