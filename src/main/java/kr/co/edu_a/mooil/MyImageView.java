@@ -100,30 +100,6 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
 
     @Override
     public boolean onTouchEvent(MotionEvent event) {
-        int pointer_count = event.getPointerCount();
-        float x = event.getX();
-        float y = event.getY();
-
-        switch(event.getAction() & MotionEvent.ACTION_MASK) {
-
-
-            case MotionEvent.ACTION_DOWN:
-
-                path.moveTo(x, y); // 자취에 그리지 말고 위치만 이동해라
-                break;
-            case MotionEvent.ACTION_POINTER_DOWN:
-                return false;
-            case MotionEvent.ACTION_MOVE:
-                path.lineTo(x, y); // 자취에 선을 그려라
-                break;
-            case MotionEvent.ACTION_UP:
-                break;
-        }
-        return true;
-
-    }
-
-    /*if (pointer_count == 1) {
         float x = event.getX();
         float y = event.getY();
 
@@ -139,13 +115,7 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
         }
         invalidate(); // 화면을 다시그려라
         return true;
-    } else if (pointer_count == 2) {
-
-        return false;
-
-    } else {
-        return false;
-    }*/
+    }
 }
 
 

@@ -1,51 +1,52 @@
 package kr.co.edu_a.mooil;
 
 
-import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Color;
-import android.graphics.Paint;
-import android.graphics.Path;
-import android.media.Image;
-import android.net.Uri;
 import android.os.Bundle;
-import android.provider.MediaStore;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
-import android.util.AttributeSet;
-import android.util.Log;
-import android.view.MotionEvent;
-import android.view.SurfaceHolder;
-import android.view.SurfaceView;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ToggleButton;
 
-import java.io.IOException;
-import java.util.ArrayList;
+import java.io.File;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
-import static android.R.attr.x;
-import static android.R.attr.y;
-
 public class EditActivity extends AppCompatActivity {
-    public static Bitmap bm;
+    public static Bitmap original;
+    public static Bitmap masking;
     public static ImageView mPinchView;
     public static PhotoViewAttacher mAttacher;
+
+    String currentOriginalPath;
+    String currentMaskingPath;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_edit);
+
         Intent intent = getIntent();
-        bm = intent.getParcelableExtra("bitmap");
+        currentOriginalPath = intent.getStringExtra("currentPath");
+
+        int end = currentOriginalPath.lastIndexOf("/");
+        String uppath = currentOriginalPath.substring(0, end);
+        String fileName = currentOriginalPath.substring(end+1, currentOriginalPath.length());
+        currentMaskingPath = uppath + "/" + "MSK_" + fileName;
+
+        File originalFile = new File(currentOriginalPath);
+        File maskingFile = new File(currentMaskingPath);
+
+        original = BitmapFactory.decodeFile(originalFile.getAbsolutePath());
+
+        if(!maskingFile.exists()) {
+            FileExplorer.storeMaskingImage(original, currentMaskingPath);
+            masking = BitmapFactory.decodeFile(maskingFile.getAbsolutePath());
+        }
 
         mPinchView = (ImageView) findViewById(R.id.pinchview);
+        mPinchView.setImageBitmap(original);
         mAttacher = new PhotoViewAttacher(mPinchView);
 
     }

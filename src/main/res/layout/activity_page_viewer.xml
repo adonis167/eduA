@@ -18,12 +18,14 @@
         android:layout_weight="1">
         <Button
             android:id="@+id/editmask"
+            android:onClick="maskOnClick"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="마스킹편집"
             android:layout_weight="1"/>
         <Button
             android:id="@+id/startmemorize"
+            android:onClick="maskOnClick"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="암기시작"
