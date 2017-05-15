@@ -335,6 +335,19 @@ public class FileExplorer extends Activity {
         }
     }
 
+    public void editOnClick(View v) { //수정버튼 터치시 하단 서브메뉴 바 버튼 리스너
+        switch (v.getId()) {
+            case R.id.movefile:
+                break;
+            case R.id.deletefile:
+
+
+                break;
+            case R.id.sharefile:
+                break;
+        }
+    }
+
     public void MFOnClick(View v) { //슬라이드바 버튼 리스너
         switch (v.getId()) {
             case R.id.mainpage:
