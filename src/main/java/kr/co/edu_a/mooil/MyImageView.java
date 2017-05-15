@@ -44,7 +44,7 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     public MyImageView(Context context, AttributeSet attrs) {
-        super(context,attrs);
+        super(context, attrs);
 
         paint.setStyle(Paint.Style.STROKE); // 선이 그려지도록
         paint.setColor(Color.DKGRAY);
@@ -55,11 +55,12 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
         canvasthread = new CanvasThread(getHolder(), this);
         setFocusable(true);
     }
+
     /*
      * xml 에서 넘어온 속성을 멤버변수로 셋팅하는 역할을 한다.
      */
-    public MyImageView(Context context,AttributeSet attrs,int defStyle) {
-        super(context,attrs,defStyle);
+    public MyImageView(Context context, AttributeSet attrs, int defStyle) {
+        super(context, attrs, defStyle);
 
         paint.setStyle(Paint.Style.STROKE); // 선이 그려지도록
         paint.setColor(Color.DKGRAY);
@@ -90,9 +91,9 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
         canvasthread.setRunning(false);
         while (retry) {
             try {
-                canvasthread.join(); retry = false;
-            }
-            catch (InterruptedException e) { // TODO: handle exception
+                canvasthread.join();
+                retry = false;
+            } catch (InterruptedException e) { // TODO: handle exception
             }
         }
     }
@@ -100,30 +101,53 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
     @Override
     public boolean onTouchEvent(MotionEvent event) {
         int pointer_count = event.getPointerCount();
-        if(pointer_count == 1) {
-            float x = event.getX();
-            float y = event.getY();
+        float x = event.getX();
+        float y = event.getY();
 
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    path.moveTo(x, y); // 자취에 그리지 말고 위치만 이동해라
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    path.lineTo(x, y); // 자취에 선을 그려라
-                    break;
-                case MotionEvent.ACTION_UP:
-                    break;
-            }
-            invalidate(); // 화면을 다시그려라
-            return true;
-        }
-        else if (pointer_count == 2){
+        switch(event.getAction() & MotionEvent.ACTION_MASK) {
 
 
-            return false;
+            case MotionEvent.ACTION_DOWN:
+
+                path.moveTo(x, y); // 자취에 그리지 말고 위치만 이동해라
+                break;
+            case MotionEvent.ACTION_POINTER_DOWN:
+                return false;
+            case MotionEvent.ACTION_MOVE:
+                path.lineTo(x, y); // 자취에 선을 그려라
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
         }
-        else {
-            return false;
-        }
+        return true;
+
     }
+
+    /*if (pointer_count == 1) {
+        float x = event.getX();
+        float y = event.getY();
+
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                path.moveTo(x, y); // 자취에 그리지 말고 위치만 이동해라
+                break;
+            case MotionEvent.ACTION_MOVE:
+                path.lineTo(x, y); // 자취에 선을 그려라
+                break;
+            case MotionEvent.ACTION_UP:
+                break;
+        }
+        invalidate(); // 화면을 다시그려라
+        return true;
+    } else if (pointer_count == 2) {
+
+        return false;
+
+    } else {
+        return false;
+    }*/
 }
+
+
+
+
