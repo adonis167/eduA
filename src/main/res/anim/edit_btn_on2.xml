@@ -4,10 +4,9 @@
 <set xmlns:android="http://schemas.android.com/apk/res/android"
     android:fillAfter="true"
     android:interpolator="@android:anim/accelerate_decelerate_interpolator">
-    <!-- 왼쪽에서 오른쪽으로 0.5초 간 이동 -->
     <translate
-        android:fromXDelta="0%"
-        android:toXDelta="-10%"
-        android:duration="60000"
+        android:fromYDelta="100%"
+        android:toYDelta="0%"
+        android:duration="300"
         android:repeatCount="0"/>
 </set>

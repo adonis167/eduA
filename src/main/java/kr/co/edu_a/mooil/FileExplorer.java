@@ -7,6 +7,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.media.ExifInterface;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -19,8 +20,6 @@ import android.view.View;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
-import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -238,6 +237,7 @@ public class FileExplorer extends Activity {
                     mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_folder), Name, "Folder", ContextCompat.getDrawable(this, R.drawable.list_favor_off)) ;
                 }else{
                     Name = files[i];
+                    Bitmap source = BitmapFactory.decodeFile(mCurrent);
                     mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_file), Name, "File", ContextCompat.getDrawable(this, R.drawable.list_favor_off)) ;
                 }
                 arFiles.add(Name);//배열리스트에 추가해줌
