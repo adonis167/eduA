@@ -19,9 +19,12 @@ package kr.co.edu_a.mooil;
 import android.app.Activity;
 import android.app.Fragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.pdf.PdfRenderer;
+import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.ParcelFileDescriptor;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -30,6 +33,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.Toast;
 
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -50,6 +54,7 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
      * The filename of the PDF.
      */
     private static final String FILENAME = "PDF_test.pdf";
+    private static final String pureFILENAME = FILENAME.substring(0,FILENAME.length()-4);
 
     /**
      * File descriptor of the PDF.
@@ -81,6 +86,8 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
      */
     private Button mButtonNext;
 
+    private Button mButtonConvert;
+
     public PdfRendererBasicFragment() {
     }
 
@@ -97,16 +104,18 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
         mImageView = (ImageView) view.findViewById(R.id.image);
         mButtonPrevious = (Button) view.findViewById(R.id.previous);
         mButtonNext = (Button) view.findViewById(R.id.next);
+        mButtonConvert = (Button) view.findViewById(R.id.convert);
         // Bind events.
         mButtonPrevious.setOnClickListener(this);
         mButtonNext.setOnClickListener(this);
+        mButtonConvert.setOnClickListener(this);
         // Show the first page by default.
         int index = 0;
         // If there is a savedInstanceState (screen orientations, etc.), we restore the page index.
         if (null != savedInstanceState) {
             index = savedInstanceState.getInt(STATE_CURRENT_PAGE_INDEX, 0);
         }
-        showPage(index);
+//        showPage(index);
     }
 
     @Override
@@ -204,6 +213,63 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
         updateUi();
     }
 
+    /** PDF 페이지 반복문 돌면서 저장하는 메소드 **/
+    private boolean saveConvertedImage() {
+
+        /** 파일이름으로 된 폴더 생성(수정필요) **/
+        String newFolderName = pureFILENAME;
+        String dirPath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/eduA" + "/Convert/" + newFolderName;
+        File file = new File(dirPath);
+
+        if (!file.exists()) {
+            file.mkdir();
+        }
+        else {
+            Toast.makeText(getActivity(), "이미 같은 이름의 폴더가 존재합니다.", Toast.LENGTH_SHORT).show();
+            return false;
+        }
+
+        int pageCount = mPdfRenderer.getPageCount();
+        for(int i=0; i<pageCount; i++) {
+            if (null != mCurrentPage) {
+                mCurrentPage.close();
+            }
+            mCurrentPage = mPdfRenderer.openPage(i);
+
+            Bitmap bitmap = Bitmap.createBitmap(mCurrentPage.getWidth(), mCurrentPage.getHeight(),
+                    Bitmap.Config.ARGB_8888);
+            mCurrentPage.render(bitmap, null, null, PdfRenderer.Page.RENDER_MODE_FOR_DISPLAY);
+
+            String filePath;
+            if (i<10) {
+                filePath = dirPath + "/" + pureFILENAME + "_" + "0" + i + ".jpg";
+            }
+            else {
+                filePath = dirPath + "/" + pureFILENAME + "_" + i + ".jpg";
+            }
+            storeImage(bitmap, filePath);
+        }
+        return true;
+    }
+
+    /** 이미지 저장하는 메소드 **/
+    private void storeImage(Bitmap bitmap, String filePath) {
+        File file = new File(filePath);
+        BufferedOutputStream out = null;
+
+        try {
+            file.createNewFile();
+            out = new BufferedOutputStream(new FileOutputStream(file));
+            bitmap.compress(Bitmap.CompressFormat.JPEG, 100, out);
+
+            out.flush();
+            out.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
     /**
      * Updates the state of 2 control buttons in response to the current page index.
      */
@@ -212,7 +278,6 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
         int pageCount = mPdfRenderer.getPageCount();
         mButtonPrevious.setEnabled(0 != index);
         mButtonNext.setEnabled(index + 1 < pageCount);
-        getActivity().setTitle(getString(R.string.app_name_with_index, index + 1, pageCount));
     }
 
     /**
@@ -229,12 +294,18 @@ public class PdfRendererBasicFragment extends Fragment implements View.OnClickLi
         switch (view.getId()) {
             case R.id.previous: {
                 // Move to the previous page
-                showPage(mCurrentPage.getIndex() - 1);
+//                showPage(mCurrentPage.getIndex() - 1);
                 break;
             }
             case R.id.next: {
                 // Move to the next page
-                showPage(mCurrentPage.getIndex() + 1);
+//                showPage(mCurrentPage.getIndex() + 1);
+                break;
+            }
+            case R.id.convert: {
+                if (saveConvertedImage()) {
+                    Toast.makeText(getActivity(), "정상적으로 변환되었습니다.", Toast.LENGTH_LONG).show();
+                }
                 break;
             }
         }

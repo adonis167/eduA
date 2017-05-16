@@ -40,8 +40,8 @@ public class EditActivity extends AppCompatActivity {
 
         int end = currentOriginalPath.lastIndexOf("/");
         String uppath = currentOriginalPath.substring(0, end);
-        String fileName = currentOriginalPath.substring(end+1, currentOriginalPath.length());
-        currentMaskingPath = uppath + "/" + "MSK_" + fileName;
+        String fileName = currentOriginalPath.substring(end+1, currentOriginalPath.length()-4);
+        currentMaskingPath = uppath + "/" + "MSK_" + fileName + ".png";
 
         File originalFile = new File(currentOriginalPath);
         File maskingFile = new File(currentMaskingPath);
@@ -67,6 +67,13 @@ public class EditActivity extends AppCompatActivity {
 
 
     public void onButtonClickEdit(View v){
+        switch (v.getId()) {
+            case R.id.editBack:
+                /** 아래코드 수정 반드시 해야함. 오류 안나게 스태틱으로 바꾸고 커스텀뷰 매소드 강제 호출한 상태임. **/
+                CanvasThread.setRunning(false);
+                finish();
+                break;
+        }
         //닫기
         /*if(isLayerOpen){
             //애니메이션 시작

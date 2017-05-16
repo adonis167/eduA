@@ -9,6 +9,7 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
 
 /**
  * Created by JihoYoon on 2017-04-02.
@@ -16,7 +17,7 @@ import android.view.SurfaceView;
 
 public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
     private static int STROKE_WIDTH = 35;
-    private static int OPACITY = 75;
+    private static int OPACITY = 90;
 
     private CanvasThread canvasthread;
     Paint paint = new Paint();
@@ -110,6 +111,7 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
         invalidate(); // 화면을 다시그려라
         return true;
     }
+
 
     public static void propertySet(int strock, int opacity)
     {

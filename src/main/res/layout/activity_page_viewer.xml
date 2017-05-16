@@ -4,30 +4,49 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical" >
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        style="?android:attr/buttonBarStyle"
+        android:layout_margin="0dp">
+        <Button
+            android:id="@+id/viewerBack"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            style="?android:attr/buttonBarButtonStyle"
+            android:onClick="viewerOnClick"
+            android:text="뒤로가기"/>
+    </LinearLayout>
 
     <android.support.v4.view.ViewPager
         android:id="@+id/pageviewer"
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        android:layout_margin="0dp"
         android:layout_weight="9"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
+        style="?android:attr/buttonBarStyle"
         android:orientation="horizontal"
+        android:layout_margin="0dp"
+        android:padding="0dp"
         android:layout_weight="1">
         <Button
             android:id="@+id/editmask"
-            android:onClick="maskOnClick"
+            android:onClick="viewerOnClick"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            style="?android:attr/buttonBarButtonStyle"
             android:text="마스킹편집"
             android:layout_weight="1"/>
         <Button
             android:id="@+id/startmemorize"
-            android:onClick="maskOnClick"
+            android:onClick="viewerOnClick"
             android:layout_width="0dp"
             android:layout_height="wrap_content"
+            style="?android:attr/buttonBarButtonStyle"
             android:text="암기시작"
             android:layout_weight="1"/>
 

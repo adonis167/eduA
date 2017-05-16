@@ -19,9 +19,16 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    tools:context=".PDFRenderer$PlaceholderFragment">
+    >
+    <Button
+        android:id="@+id/convert"
+        style="?android:attr/buttonBarButtonStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/convert" />
 
     <ImageView
+        android:visibility="gone"
         android:id="@+id/image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
@@ -30,6 +37,7 @@
         android:scaleType="fitCenter" />
 
     <LinearLayout
+        android:visibility="gone"
         style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"

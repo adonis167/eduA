@@ -61,7 +61,7 @@ public class PageViewer extends AppCompatActivity {
     }
 
 
-    public void maskOnClick(View v) {
+    public void viewerOnClick(View v) {
         switch (v.getId()) {
             case R.id.editmask:
                 Intent intent_editmask = new Intent(PageViewer.this, EditActivity.class);
@@ -72,6 +72,10 @@ public class PageViewer extends AppCompatActivity {
             case R.id.startmemorize:
                 Intent intent_memorize = new Intent(PageViewer.this, Memorize.class);
                 startActivity(intent_memorize);
+                break;
+
+            case R.id.viewerBack:
+                finish();
                 break;
         }
     }

@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -22,11 +23,19 @@ public class Memorize extends AppCompatActivity{
     int cur;
     PhotoViewAttacher mAttacher;
 
+    Button memorizePrevious;
+    Button memorizeNext;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.memorize);
+
         siv = (ScratchImageView) findViewById(R.id.memorizeImageView);
+
+        memorizePrevious = (Button) findViewById(R.id.memorizePrevious);
+        memorizeNext = (Button) findViewById(R.id.memorizeNext);
+
         cur = PageViewer.current;
 
         File imgFile = new File(PageViewer.InFolderFiles.get(cur));
@@ -36,37 +45,49 @@ public class Memorize extends AppCompatActivity{
             siv.setImageBitmap(bm);
         }
 
+        updateUI();
+
 //        mAttacher = new PhotoViewAttacher(siv);
 
     }
 
     public void memOnClick(View v) {
+        File imgFile;
+
         switch (v.getId()) {
             case R.id.memorizePrevious:
-                if(cur > 0 && cur < PageViewer.InFolderFiles.size()) {
-                    cur--;
-                    File imgFile = new File(PageViewer.InFolderFiles.get(cur));
+                cur--;
+                imgFile = new File(PageViewer.InFolderFiles.get(cur));
 
-                    if(imgFile.exists()) {
-                        Bitmap bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                        siv.setImageBitmap(bm);
-                    }
+                if(imgFile.exists()) {
+                    Bitmap bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    siv.setImageBitmap(bm);
                 }
+                updateUI();
                 break;
 
             case R.id.memorizeNext:
-                if(cur >= 0 && cur <= PageViewer.InFolderFiles.size()) {
-                    cur++;
-                    File imgFile = new File(PageViewer.InFolderFiles.get(cur));
+                cur++;
+                imgFile = new File(PageViewer.InFolderFiles.get(cur));
 
-                    if(imgFile.exists()) {
-                        Bitmap bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
-                        siv.setImageBitmap(bm);
-                    }
+                if(imgFile.exists()) {
+                    Bitmap bm = BitmapFactory.decodeFile(imgFile.getAbsolutePath());
+                    siv.setImageBitmap(bm);
                 }
+                updateUI();
+                break;
+
+            case R.id.memorizeBack:
+                finish();
                 break;
         }
     }
+
+    public void updateUI() {
+        memorizePrevious.setEnabled(cur > 0 && cur < PageViewer.InFolderFiles.size());
+        memorizeNext.setEnabled(cur >= 0 && cur < PageViewer.InFolderFiles.size()-1);
+    }
+
 
     /*protected class MyView extends View {
         public MyView(Context context) {

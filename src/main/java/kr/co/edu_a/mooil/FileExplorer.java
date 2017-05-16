@@ -1,5 +1,6 @@
 package kr.co.edu_a.mooil;
 
+import android.Manifest;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
@@ -33,7 +34,8 @@ import java.util.ArrayList;
 import java.util.Vector;
 
 public class FileExplorer extends Activity {
-    private static final int PERMISSION_REQUEST_CODE = 9;
+    private static final int PERMISSION_REQUEST_CODE_WRITE = 999;
+    private static final int PERMISSION_REQUEST_CODE_CAMERA = 998;
     private static final int PICK_FROM_CAMERA = 0;
     private static final int PICK_FROM_ALBUM = 1;
     private static final int CROP_FROM_iMAGE = 2;
@@ -70,12 +72,12 @@ public class FileExplorer extends Activity {
 
         if (Build.VERSION.SDK_INT >= 23)
         {
-            if (checkPermission())
+            if (checkPermission("WRITE"))
             {
                 // Code for above or equal 23 API Oriented Device
                 // Your Permission granted already .Do next code
             } else {
-                requestPermission(); // Code for permission
+                requestPermission("WRITE"); // Code for permission
             }
         }
         else
@@ -107,8 +109,10 @@ public class FileExplorer extends Activity {
         mAdapter = new ListViewAdapter();
         mFileList.setAdapter(mAdapter);//리스트뷰에 어댑터 연결
         mFileList.setOnItemClickListener(mItemClickListener);//리스너 연결
+
         refreshFiles();
         mFileList.invalidate();
+
         modifyButton = (ImageView)findViewById(R.id.list_modify_btn);
         modifyButton.setVisibility(View.VISIBLE);
         newFolderButton = (ImageView)findViewById(R.id.btnNewDirectory);
@@ -148,11 +152,6 @@ public class FileExplorer extends Activity {
                         }
                     }
                     else {
-                        //디렉토리이면
-                        if (Name.startsWith("[") && Name.endsWith("]")) {
-                            Name = Name.substring(1, Name.length() - 1);//[]부분을 제거해줌
-                        }
-
                         //들어가기 위해 /와 터치한 파일 명을 붙여줌
                         String Path = mCurrent + "/" + Name;
                         File f = new File(Path);//File 클래스 생성
@@ -171,7 +170,9 @@ public class FileExplorer extends Activity {
                                 String tempPath = mCurrent + "/" + files[i];
                                 File tempf = new File(tempPath);
                                 if(!tempf.isDirectory()){
-                                    InFolderFiles.add(mCurrent + "/" + files[i]);
+                                    if(!files[i].substring(0,4).equals("MSK_")) {
+                                        InFolderFiles.add(mCurrent + "/" + files[i]);
+                                    }
                                 }
                             }
 
@@ -208,21 +209,33 @@ public class FileExplorer extends Activity {
                 String Name = "";
                 File f = new File(Path);
                 if(f.isDirectory()){
-                    Name = "" + files[i] + "";//디렉토리면 []를 붙여주고
+                    Name = "" + files[i] + "";
                     mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_folder), Name, "Folder", ContextCompat.getDrawable(this, R.drawable.list_favor_off)) ;
+                    arFiles.add(Name);//배열리스트에 추가해줌
                 }else{
                     Name = files[i];
-                    mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_file), Name, "File", ContextCompat.getDrawable(this, R.drawable.list_favor_off)) ;
+                    if(!Name.substring(0,4).equals("MSK_")) {
+                        mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_file), Name, "File", ContextCompat.getDrawable(this, R.drawable.list_favor_off));
+                        arFiles.add(Name);//배열리스트에 추가해줌
+                    }
                 }
-                arFiles.add(Name);//배열리스트에 추가해줌
             }
         }
         //다끝나면 리스트뷰를 갱신시킴
         mAdapter.notifyDataSetChanged();
     }
 
-    private boolean checkPermission() {
-        int result = ContextCompat.checkSelfPermission(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+    private boolean checkPermission(String permisson) {
+        int result = 100;
+        switch (permisson) {
+            case "WRITE":
+                result = ContextCompat.checkSelfPermission(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE);
+                break;
+            case "CAMERA":
+                result = ContextCompat.checkSelfPermission(FileExplorer.this, Manifest.permission.CAMERA);
+                break;
+        }
+
         if (result == PackageManager.PERMISSION_GRANTED) {
             return true;
         } else {
@@ -230,23 +243,41 @@ public class FileExplorer extends Activity {
         }
     }
 
-    private void requestPermission() {
-
-        if (ActivityCompat.shouldShowRequestPermissionRationale(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
-            Toast.makeText(FileExplorer.this, "Write External Storage permission allows us to do store images. Please allow this permission in App Settings.", Toast.LENGTH_LONG).show();
-        } else {
-            ActivityCompat.requestPermissions(FileExplorer.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE);
+    private void requestPermission(String permisson) {
+        switch (permisson) {
+            case "WRITE":
+                if (ActivityCompat.shouldShowRequestPermissionRationale(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    Toast.makeText(FileExplorer.this, "외부저장소 쓰기 권한은 파일을 저장하는데 사용됩니다. 앱 설정에서 권한을 허용하십시오.", Toast.LENGTH_LONG).show();
+                } else {
+                    ActivityCompat.requestPermissions(FileExplorer.this, new String[]{android.Manifest.permission.WRITE_EXTERNAL_STORAGE}, PERMISSION_REQUEST_CODE_WRITE);
+                }
+                break;
+            case "CAMERA":
+                if (ActivityCompat.shouldShowRequestPermissionRationale(FileExplorer.this, android.Manifest.permission.WRITE_EXTERNAL_STORAGE)) {
+                    Toast.makeText(FileExplorer.this, "외부저장소 쓰기 권한은 파일을 저장하는데 사용됩니다. 앱 설정에서 권한을 허용하십시오.", Toast.LENGTH_LONG).show();
+                } else {
+                    ActivityCompat.requestPermissions(FileExplorer.this, new String[]{Manifest.permission.CAMERA}, PERMISSION_REQUEST_CODE_CAMERA);
+                }
+                break;
         }
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-            case PERMISSION_REQUEST_CODE:
+            case PERMISSION_REQUEST_CODE_WRITE:
                 if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
-                    Log.e("value", "Permission Granted, Now you can use local drive .");
+                    Log.e("permisson", "Permission Granted, Now you can use local drive .");
                 } else {
-                    Log.e("value", "Permission Denied, You cannot use local drive .");
+                    Log.e("permisson", "Permission Denied, You cannot use local drive .");
+                }
+                break;
+
+            case PERMISSION_REQUEST_CODE_CAMERA:
+                if (grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED) {
+                    Log.e("permisson", "Permission Granted, Now you can use camera .");
+                } else {
+                    Log.e("permisson", "Permission Denied, You cannot use camera .");
                 }
                 break;
         }
@@ -344,19 +375,6 @@ public class FileExplorer extends Activity {
         }
     }
 
-    public void editOnClick(View v) { //수정버튼 터치시 하단 서브메뉴 바 버튼 리스너
-        switch (v.getId()) {
-            case R.id.movefile:
-                break;
-            case R.id.deletefile:
-
-
-                break;
-            case R.id.sharefile:
-                break;
-        }
-    }
-
     public void MFOnClick(View v) { //슬라이드바 버튼 리스너
         switch (v.getId()) {
             case R.id.mainpage:
@@ -402,6 +420,7 @@ public class FileExplorer extends Activity {
             case R.id.importfile:
                 break;
             case R.id.pdfrender:
+                /** SDK버전 체크 필요함 **/
                 slide_intent = new Intent(this, PDFRenderer.class);
                 startActivity(slide_intent);
                 break;
@@ -416,6 +435,21 @@ public class FileExplorer extends Activity {
 
     }
     private void getPhotoFromCamera() { // 카메라 촬영 후 이미지 가져오기
+        if (Build.VERSION.SDK_INT >= 23)
+        {
+            if (checkPermission("CAMERA"))
+            {
+                // Code for above or equal 23 API Oriented Device
+                // Your Permission granted already .Do next code
+            } else {
+                requestPermission("CAMERA"); // Code for permission
+            }
+        }
+        else
+        {
+            // Code for Below 23 API Oriented Device
+            // Do next code
+        }
 
         Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
 
@@ -573,6 +607,7 @@ public class FileExplorer extends Activity {
             if(test == true)
             {
                 vecStrReturnTarget.add(arFiles.get(i));
+                vecStrReturnTarget.add("MSK_" + arFiles.get(i).substring(0,arFiles.get(i).length()-4) + ".png");
             }
         }
         return vecStrReturnTarget;
@@ -664,6 +699,14 @@ public class FileExplorer extends Activity {
                 }
             }
         }
-        file.delete();    //root 삭제
+        else {
+            int end = path.lastIndexOf("/");
+            String uppath = path.substring(0, end);
+            String fileName = path.substring(end+1,path.length()-4);
+            String maskpath = uppath + "/" + "MSK_" + fileName + ".png";
+            File maskFile = new File(maskpath);
+            file.delete();
+            maskFile.delete();
+        }
     }
 }

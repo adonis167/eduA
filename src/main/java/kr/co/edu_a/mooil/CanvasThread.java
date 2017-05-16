@@ -11,14 +11,14 @@ import android.view.SurfaceHolder;
 public class CanvasThread extends Thread {
     private SurfaceHolder surfaceHolder;
     private MyImageView myImageView;
-    private boolean run = false;
+    private static boolean run = false;
 
     public CanvasThread(SurfaceHolder s, MyImageView m) {
 
         surfaceHolder = s;
         myImageView = m;
     }
-    public void setRunning(boolean r) {
+    public static void setRunning(boolean r) {
         run = r;
     }
 
