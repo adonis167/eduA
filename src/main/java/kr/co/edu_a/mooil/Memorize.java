@@ -6,7 +6,6 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 
 import java.io.File;
@@ -23,8 +22,8 @@ public class Memorize extends AppCompatActivity{
     int cur;
     PhotoViewAttacher mAttacher;
 
-    Button memorizePrevious;
-    Button memorizeNext;
+    ImageView memorizePrevious;
+    ImageView memorizeNext;
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
@@ -33,8 +32,8 @@ public class Memorize extends AppCompatActivity{
 
         siv = (ScratchImageView) findViewById(R.id.memorizeImageView);
 
-        memorizePrevious = (Button) findViewById(R.id.memorizePrevious);
-        memorizeNext = (Button) findViewById(R.id.memorizeNext);
+        memorizePrevious = (ImageView) findViewById(R.id.memorizePrevious);
+        memorizeNext = (ImageView) findViewById(R.id.memorizeNext);
 
         cur = PageViewer.current;
 

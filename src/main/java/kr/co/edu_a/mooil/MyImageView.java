@@ -9,7 +9,6 @@ import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
 
 /**
  * Created by JihoYoon on 2017-04-02.
@@ -68,9 +67,7 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
     protected void onDraw(Canvas canvas) {
-
         canvas.drawPath(path, paint); // 저장된 path 를 그려라
-
     }
 
     public void surfaceChanged(SurfaceHolder holder, int format, int width, int height) {
@@ -113,9 +110,9 @@ public class MyImageView extends SurfaceView implements SurfaceHolder.Callback {
     }
 
 
-    public static void propertySet(int strock, int opacity)
+    public static void propertySet(int stroke, int opacity)
     {
-        STROKE_WIDTH = strock;
+        STROKE_WIDTH = stroke;
         OPACITY = opacity;
     }
 }

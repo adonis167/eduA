@@ -8,9 +8,12 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 import java.io.File;
+import java.util.Vector;
 
 import uk.co.senab.photoview.PhotoViewAttacher;
 
@@ -20,17 +23,17 @@ public class EditActivity extends AppCompatActivity {
     public static Bitmap masking;
     public static ImageView mPinchView;
     public static PhotoViewAttacher mAttacher;
-    boolean isBtnLayerOn = false;
-/*
+    int nowBtnState = 0; //0 = None, 1 = Pan, 2 = Stroke, 3 = Color
     Animation aniBtnOn2;
     Animation aniBtnOff2;
-    Animation aniBtnOn3;
-    Animation aniBtnOff3;*/
-
-
 
     String currentOriginalPath;
     String currentMaskingPath;
+
+    Vector nowSelectedIcon;
+    Vector vecIconSet1;
+    Vector vecIconSet2;
+    Vector vecIconSet3;
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -57,14 +60,40 @@ public class EditActivity extends AppCompatActivity {
         mPinchView.setImageBitmap(original);
         mAttacher = new PhotoViewAttacher(mPinchView);
 
-        //Animation Load
-        /*
-        aniBtnOn2 = AnimationUtils.loadAnimation(this, R.anim.edit_btn_on2);
-        aniBtnOff2 = AnimationUtils.loadAnimation(this, R.anim.edit_btn_off2);
-        aniBtnOn3 = AnimationUtils.loadAnimation(this, R.anim.edit_btn_on3);
-        aniBtnOff3 = AnimationUtils.loadAnimation(this, R.anim.edit_btn_off3);*/
+
+        iconInitialization();
     }
 
+    protected void iconInitialization()
+    {
+        //Animation Load
+
+        aniBtnOn2 = AnimationUtils.loadAnimation(this, R.anim.edit_btn_on2);
+        aniBtnOff2 = AnimationUtils.loadAnimation(this, R.anim.edit_btn_off2);
+
+        //선택된 Icon Id
+        nowSelectedIcon = new Vector();
+        nowSelectedIcon.add(R.id.editPan);
+        nowSelectedIcon.add(R.id.editStroke1);
+        nowSelectedIcon.add(R.id.editColor);
+
+        vecIconSet1 = new Vector();
+        vecIconSet1.add(R.id.editPan);
+        vecIconSet1.add(R.id.editEraser);
+        vecIconSet1.add(R.id.editClearAll);
+
+        vecIconSet2 = new Vector();
+        vecIconSet2.add(R.id.editStroke1);
+        vecIconSet2.add(R.id.editStroke2);
+        vecIconSet2.add(R.id.editStroke3);
+        vecIconSet2.add(R.id.editStroke4);
+
+        vecIconSet3 = new Vector();
+        vecIconSet3.add(R.id.editColor);
+        vecIconSet3.add(R.id.editOrange);
+        vecIconSet3.add(R.id.editGreen);
+        vecIconSet3.add(R.id.editRed);
+    }
 
     public void onButtonClickEdit(View v){
         switch (v.getId()) {
@@ -74,64 +103,71 @@ public class EditActivity extends AppCompatActivity {
                 finish();
                 break;
         }
-        //닫기
-        /*if(isLayerOpen){
-            //애니메이션 시작
-            slidingPage01.startAnimation(translateLeftAnim);
-            for(int i=0; i<mFileList.getChildCount(); i++)//mainPage 이하 활성화
-                mFileList.getChildAt(i).setClickable(true);
-            isPageOpen = false;
+        if(nowBtnState == 0)
+        {
+            iconAnimationOff(nowSelectedIcon);
+            if(v.getId() == (int)nowSelectedIcon.get(0))
+            {
+                nowBtnState = 1;
+                iconAnimationOn(vecIconSet1);
+            }
+            if(v.getId() == (int)nowSelectedIcon.get(1))
+            {
+                nowBtnState = 2;
+                iconAnimationOn(vecIconSet2);
+            }
+            if(v.getId() == (int)nowSelectedIcon.get(2))
+            {
+                nowBtnState = 3;
+                iconAnimationOn(vecIconSet3);
+            }
         }
-        //열기
-        else{
-            slidingPage01.setVisibility(View.VISIBLE);
-            slidingPage01.startAnimation(translateRightAnim);
-            slidingPage01.setClickable(true);
-            for(int i=0; i<mFileList.getChildCount(); i++)//비활성화
-                mFileList.getChildAt(i).setClickable(false);
-            isPageOpen = true;
-        }*/
+        else
+        {
+            if(nowBtnState == 1)
+            {
+                iconAnimationOff(vecIconSet1);
+                iconAnimationOn(nowSelectedIcon);
+                nowBtnState = 0;
+            }
+            if(nowBtnState == 2)
+            {
+                if(v.getId() == (int)vecIconSet2.get(0))
+                    MyImageView.propertySet(10, 90);
+                else if(v.getId() == (int)vecIconSet2.get(1))
+                    MyImageView.propertySet(20, 90);
+                else if(v.getId() == (int)vecIconSet2.get(2))
+                    MyImageView.propertySet(30, 90);
+                else if(v.getId() == (int)vecIconSet2.get(3))
+                    MyImageView.propertySet(40, 90);
+                iconAnimationOff(vecIconSet2);
+                iconAnimationOn(nowSelectedIcon);
+                nowBtnState = 0;
+            }
+            if(nowBtnState == 3)
+            {
+                iconAnimationOff(vecIconSet3);
+                iconAnimationOn(nowSelectedIcon);
+                nowBtnState = 0;
+            }
+        }
+    }
 
-      /*  //닫음
-        if(isBtnLayerOn)
+    public void iconAnimationOff(Vector vecTargetViewId)
+    {
+        for(int i=0; i<vecTargetViewId.size(); i++)
         {
-            findViewById(R.id.editButton2).startAnimation(aniBtnOff2);
-            findViewById(R.id.editButton1).startAnimation(aniBtnOff3);
-            findViewById(R.id.editButton4).startAnimation(aniBtnOff2);
-            isBtnLayerOn = false;
+            findViewById((int)vecTargetViewId.get(i)).setVisibility(View.GONE);
         }
-        else//열기
-        {
-            findViewById(R.id.editButton2).startAnimation(aniBtnOn2);
-            findViewById(R.id.editButton1).startAnimation(aniBtnOn3);
-            findViewById(R.id.editButton4).startAnimation(aniBtnOn2);
-            isBtnLayerOn = true;
-        }
-        //이하 버튼 동작 분기
-        if(v.getId()==R.id.editButton1)
-        {
-            MyImageView.propertySet(20, 75);
-        }
-        if(v.getId()==R.id.editButton2)
-        {
-            MyImageView.propertySet(40, 75);
-        }
-        if(v.getId()==R.id.editButton3)
-        {
-            MyImageView.propertySet(80, 75);
-        }
-        if(v.getId()==R.id.editButton4)
-        {
+    }
 
-        }
-        if(v.getId()==R.id.editButton5)
+    public void iconAnimationOn(Vector vecTargetViewId2)
+    {
+        for(int i=0; i<vecTargetViewId2.size(); i++)
         {
-
+            findViewById((int)vecTargetViewId2.get(i)).startAnimation(aniBtnOn2);
+            findViewById((int)vecTargetViewId2.get(i)).setVisibility(View.VISIBLE);
         }
-        if(v.getId()==R.id.editButton6)
-        {
-
-        }*/
     }
 }
 
