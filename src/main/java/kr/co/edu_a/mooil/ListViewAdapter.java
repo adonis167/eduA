@@ -2,6 +2,7 @@ package kr.co.edu_a.mooil;
 
 import android.content.Context;
 import android.graphics.drawable.Drawable;
+import android.support.v4.content.ContextCompat;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -16,6 +17,7 @@ import java.util.ArrayList;
 
 public class ListViewAdapter extends BaseAdapter {
     boolean isCheckBoxDraw = false;
+    boolean isFavoriteDraw = true;
     // Adapter에 추가된 데이터를 저장하기 위한 ArrayList
     private ArrayList<ListViewItem> listViewItemList = new ArrayList<ListViewItem>() ;
     // ListViewAdapter의 생성자
@@ -33,7 +35,6 @@ public class ListViewAdapter extends BaseAdapter {
     public View getView(int position, View convertView, ViewGroup parent) {
         final int pos = position;
         final Context context = parent.getContext();
-
         // "listview_item" Layout을 inflate하여 convertView 참조 획득.
         if (convertView == null) {
             LayoutInflater inflater = (LayoutInflater) context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
@@ -47,19 +48,40 @@ public class ListViewAdapter extends BaseAdapter {
         TextView titleTextView = (TextView) convertView.findViewById(R.id.listFileText1) ;
         TextView descTextView = (TextView) convertView.findViewById(R.id.listFileText2) ;
         ImageView favorImageView = (ImageView) convertView.findViewById(R.id.listFavorImage01) ;
-
         // Data Set(listViewItemList)에서 position에 위치한 데이터 참조 획득
         ListViewItem listViewItem = listViewItemList.get(position);
         listCheckBox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
                                                 public void onCheckedChanged(CompoundButton buttonView, boolean isChecked){
                                                         listViewItemList.get(pos).setCheck(isChecked);
                                                 } });
+
+        favorImageView.setOnClickListener(new View.OnClickListener(){
+            public void onClick(View v) {
+                if(listViewItemList.get(pos).getFavor() == 0)
+                {
+                    listViewItemList.get(pos).setFavor(1);
+                    FavoriteList.addList(listViewItemList.get(pos).getPath());
+                }
+                else
+                {
+                    listViewItemList.get(pos).setFavor(0);
+                    FavoriteList.remove(listViewItemList.get(pos).getPath());
+                }
+                refreshItems();
+            }
+        });
+
         // 아이템 내 각 위젯에 데이터 반영
         listCheckBox.setChecked(listViewItem.getCheck());
         iconImageView.setImageDrawable(listViewItem.getIcon());
         titleTextView.setText(listViewItem.getTitle());
         descTextView.setText(listViewItem.getDesc());
-        favorImageView.setImageDrawable(listViewItem.getFavor());
+        if(listViewItem.getFavor()==0)
+            favorImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.list_favor_off));
+        if(listViewItem.getFavor()==1)
+            favorImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.list_favor_on));
+        if(listViewItem.getFavor()==2)
+            favorImageView.setImageDrawable(ContextCompat.getDrawable(context, R.drawable.list_null));
 
         if(isCheckBoxDraw){
             listCheckBox.setVisibility(View.VISIBLE);
@@ -68,6 +90,12 @@ public class ListViewAdapter extends BaseAdapter {
         else{
             listCheckBox.setVisibility(View.GONE);
             textLayout.setWeightSum(5);
+        }
+        if(isFavoriteDraw){
+            favorImageView.setVisibility(View.VISIBLE);
+        }
+        else{
+            favorImageView.setVisibility(View.GONE);
         }
 
         return convertView;
@@ -84,9 +112,12 @@ public class ListViewAdapter extends BaseAdapter {
     public Object getItem(int position) {
         return listViewItemList.get(position) ;
     }
-
+    public void refreshItems()
+    {
+        this.notifyDataSetChanged();
+    }
     // 아이템 데이터 추가를 위한 함수. 개발자가 원하는대로 작성 가능.
-    public void addItem(Drawable icon, String title, String desc, Drawable favor) {
+    public void addItem(Drawable icon, String title, String path, String desc, int favor) {
         ListViewItem item = new ListViewItem();
 
         item.setCheck(false);
@@ -94,7 +125,7 @@ public class ListViewAdapter extends BaseAdapter {
         item.setTitle(title);
         item.setDesc(desc);
         item.setFavor(favor);
-
+        item.setPath(path);
         listViewItemList.add(item);
     }
     public boolean getChecker(int position) {

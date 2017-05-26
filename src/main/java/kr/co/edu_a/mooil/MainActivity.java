@@ -45,6 +45,13 @@ public class MainActivity extends AppCompatActivity {
         translateRightAnim.setAnimationListener(animationListener);
         fadeInRightAnim.setAnimationListener(animationListener);
         fadeOutLeftAnim.setAnimationListener(animationListener);
+        //전역 리스트 and 클래스 초기화
+        RecentList.RecentList();
+        FavoriteList.FavoriteList();
+        ListSaveIntoCache.ListSaveIntoCache(getBaseContext());
+        FavoriteList.readList();
+        RecentList.readList();
+        //여기서 초기화 Test.
     }
     @Override
     protected void attachBaseContext(Context newBase) {
@@ -92,7 +99,6 @@ public class MainActivity extends AppCompatActivity {
 
         }
     }
-
     public void MFOnClick(View v) {
         switch (v.getId()) {
             case R.id.mainpage:
@@ -106,8 +112,12 @@ public class MainActivity extends AppCompatActivity {
             case R.id.notice:
                 break;
             case R.id.favorite:
+                slide_intent = new Intent(this, FavoriteView.class);
+                startActivity(slide_intent);
                 break;
             case R.id.recentread:
+                slide_intent = new Intent(this, RecentView.class);
+                startActivity(slide_intent);
                 break;
             case R.id.importfile:
                 break;

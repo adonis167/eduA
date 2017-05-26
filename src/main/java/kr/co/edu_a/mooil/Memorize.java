@@ -47,7 +47,6 @@ public class Memorize extends AppCompatActivity{
         updateUI();
 
 //        mAttacher = new PhotoViewAttacher(siv);
-
     }
 
     public void memOnClick(View v) {

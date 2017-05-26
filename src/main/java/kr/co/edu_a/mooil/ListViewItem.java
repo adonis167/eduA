@@ -6,8 +6,9 @@ public class ListViewItem {
     private Drawable iconDrawable ;
     private String titleStr ;
     private String descStr ;
-    private Drawable iconFavor ;
+    private int iconFavor ;
     private boolean listCheck;
+    private String path;
     public void setIcon(Drawable icon) {
         iconDrawable = icon ;
     }
@@ -17,10 +18,11 @@ public class ListViewItem {
     public void setDesc(String desc) {
         descStr = desc ;
     }
-    public void setFavor(Drawable favor) {
+    public void setFavor(int favor) {
         iconFavor = favor ;
     }
     public void setCheck(boolean checker) { listCheck = checker; }
+    public void setPath(String inputpath) {path = inputpath;}
 
     public Drawable getIcon() {
         return this.iconDrawable ;
@@ -31,8 +33,9 @@ public class ListViewItem {
     public String getDesc() {
         return this.descStr ;
     }
-    public Drawable getFavor() {
+    public int getFavor() {
         return this.iconFavor ;
     }
     public boolean getCheck() { return this.listCheck;}
+    public String getPath() {return this.path;}
 }

@@ -13,32 +13,10 @@
         <include
             android:id="@+id/actionBar01"
             layout="@layout/actionbar"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:id="@+id/pathText">
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginLeft="20dp"
-                android:background="@drawable/underline"
-                android:text="현재 경로:   "
-                android:textStyle="bold"
-                android:textSize="14dp" />
-            <TextView
-                android:id="@+id/current"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginRight="20dp"
-                android:background="@drawable/underline"
-                android:text="current"
-                android:textSize="14dp" />
-        </LinearLayout>
         <ListView
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:id="@+id/filelist"
+            android:id="@+id/recent_list"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"/>
@@ -54,7 +32,3 @@
         android:id="@+id/slidingPage01"
         layout="@layout/sidebar"/>
 </FrameLayout>
-
-
-
-

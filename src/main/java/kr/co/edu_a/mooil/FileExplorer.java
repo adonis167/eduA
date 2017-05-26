@@ -85,7 +85,6 @@ public class FileExplorer extends Activity {
             // Code for Below 23 API Oriented Device
             // Do next code
         }
-
         mCurrentTxt = (TextView)findViewById(R.id.current);
         mFileList = (ListView)findViewById(R.id.filelist);
         arFiles = new ArrayList<String>();
@@ -103,7 +102,11 @@ public class FileExplorer extends Activity {
                 file[i].mkdirs();
         }
 
-        mCurrent = mRoot;
+        Intent intent = getIntent();
+        if(intent.getStringExtra("main_file_path") == null)
+            mCurrent = mRoot;
+        else
+            mCurrent = intent.getStringExtra("main_file_path");
 
         //어댑터를 생성하고 연결해줌
         mAdapter = new ListViewAdapter();
@@ -177,6 +180,7 @@ public class FileExplorer extends Activity {
                             }
 
                             String MainFilePath = mCurrent + "/" + arFiles.get(position);
+                            RecentList.addList(MainFilePath);
                             Intent intent = new Intent(FileExplorer.this, PageViewer.class);
                             intent.putExtra("main_file_path", MainFilePath);
                             intent.putExtra("in_folder_files", InFolderFiles);
@@ -199,9 +203,9 @@ public class FileExplorer extends Activity {
             //여기서 출력을 해줌
             if(mCurrent.compareTo(mRoot) != 0) {
 
-                mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_home), ".", "Home", ContextCompat.getDrawable(this, R.drawable.list_null));
+                mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_home), ".", null, "Home", 2);
                 arFiles.add(".");
-                mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_back), "..", "Back", ContextCompat.getDrawable(this, R.drawable.list_null));
+                mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_back), "..", null, "Back", 2);
                 arFiles.add("..");
             }
             for(int i = 0; i < files.length;i++){
@@ -210,12 +214,12 @@ public class FileExplorer extends Activity {
                 File f = new File(Path);
                 if(f.isDirectory()){
                     Name = "" + files[i] + "";
-                    mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_folder), Name, "Folder", ContextCompat.getDrawable(this, R.drawable.list_favor_off)) ;
+                    mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_folder), Name, Path, "Folder", FavoriteList.getIsFavor(Path)) ;
                     arFiles.add(Name);//배열리스트에 추가해줌
                 }else{
                     Name = files[i];
                     if(!Name.substring(0,4).equals("MSK_")) {
-                        mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_file), Name, "File", ContextCompat.getDrawable(this, R.drawable.list_favor_off));
+                        mAdapter.addItem(ContextCompat.getDrawable(this, R.drawable.list_file), Name, Path, "File", FavoriteList.getIsFavor(Path));
                         arFiles.add(Name);//배열리스트에 추가해줌
                     }
                 }
@@ -224,6 +228,7 @@ public class FileExplorer extends Activity {
         //다끝나면 리스트뷰를 갱신시킴
         mAdapter.notifyDataSetChanged();
     }
+
 
     private boolean checkPermission(String permisson) {
         int result = 100;
@@ -645,6 +650,7 @@ public class FileExplorer extends Activity {
         }
         else if(v.getId() == R.id.movefile)
         {
+            TextView moveFile = (TextView)findViewById(R.id.movefile);
             if(isNowCut == false)
             {
                 moveDirCut();
@@ -653,6 +659,7 @@ public class FileExplorer extends Activity {
                 isListModifyOn = false;
                 findViewById(R.id.deletefile).setBackgroundColor(Color.parseColor("#CCCCCC"));
                 findViewById(R.id.sharefile).setBackgroundColor(Color.parseColor("#CCCCCC"));
+                moveFile.setText("붙여넣기");
             }
             else {
                 for(int i=0; i<vecStrCutPath.size(); i++) {
@@ -664,6 +671,7 @@ public class FileExplorer extends Activity {
                 subMenuBar01.setVisibility(View.GONE);
                 findViewById(R.id.deletefile).setBackgroundColor(Color.parseColor("#303030"));
                 findViewById(R.id.sharefile).setBackgroundColor(Color.parseColor("#303030"));
+                moveFile.setText("잘라내기");
             }
             mFileList.invalidate();
             refreshFiles();
@@ -699,7 +707,7 @@ public class FileExplorer extends Activity {
                 }
             }
         }
-        else {
+        else {//이하 버리시오.
             int end = path.lastIndexOf("/");
             String uppath = path.substring(0, end);
             String fileName = path.substring(end+1,path.length()-4);
@@ -707,6 +715,7 @@ public class FileExplorer extends Activity {
             File maskFile = new File(maskpath);
             file.delete();
             maskFile.delete();
+            //여기까지
         }
     }
 }
